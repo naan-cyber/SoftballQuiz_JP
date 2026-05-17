@@ -1,0 +1,12 @@
+[project]
+name = "softball-defense-quiz"
+version = "0.1.0"
+description = "A Flet app for practicing softball defensive decisions by game situation."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flet[all]>=0.28.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
