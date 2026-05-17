@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import flet as ft
 
-from softball_quiz.data import question_counts_by_position, questions_for_position
-from softball_quiz.models import DefensivePosition
+from softball_quiz.data import (
+    question_counts_by_position,
+    question_counts_by_runner_role,
+    questions_for_position,
+    questions_for_runner_role,
+)
+from softball_quiz.models import DefensivePosition, RunnerRole
 from softball_quiz.services import QuizEngine
 from softball_quiz.ui import theme
 from softball_quiz.ui.components import (
@@ -21,6 +26,7 @@ class SoftballQuizApp:
     def __init__(self, page: ft.Page) -> None:
         self.page = page
         self.selected_position: DefensivePosition | None = None
+        self.selected_runner_role: RunnerRole | None = None
         self.engine = QuizEngine(questions_for_position(self.selected_position))
         self.header = HeaderBar()
         self.position_selector = PositionSelector()
@@ -63,8 +69,12 @@ class SoftballQuizApp:
                             ),
                             self.position_selector.render(
                                 selected_position=self.selected_position,
-                                counts=question_counts_by_position(),
-                                on_select=self._select_position,
+                                selected_runner_role=self.selected_runner_role,
+                                position_counts=question_counts_by_position(),
+                                runner_counts=question_counts_by_runner_role(),
+                                on_select_all=self._select_all,
+                                on_select_position=self._select_position,
+                                on_select_runner_role=self._select_runner_role,
                             ),
                             self._render_body(),
                         ],
@@ -123,7 +133,22 @@ class SoftballQuizApp:
 
     def _select_position(self, position: DefensivePosition | None) -> None:
         self.selected_position = position
+        self.selected_runner_role = None
         self.engine = QuizEngine(questions_for_position(position))
+        self.show_result = False
+        self._render()
+
+    def _select_runner_role(self, role: RunnerRole) -> None:
+        self.selected_position = None
+        self.selected_runner_role = role
+        self.engine = QuizEngine(questions_for_runner_role(role))
+        self.show_result = False
+        self._render()
+
+    def _select_all(self) -> None:
+        self.selected_position = None
+        self.selected_runner_role = None
+        self.engine = QuizEngine(questions_for_position(None))
         self.show_result = False
         self._render()
 
@@ -135,7 +160,11 @@ class SoftballQuizApp:
         self._render()
 
     def _restart(self, _: ft.Event[ft.Button]) -> None:
-        self.engine = QuizEngine(questions_for_position(self.selected_position))
+        if self.selected_runner_role is not None:
+            questions = questions_for_runner_role(self.selected_runner_role)
+        else:
+            questions = questions_for_position(self.selected_position)
+        self.engine = QuizEngine(questions)
         self.show_result = False
         self._render()
 

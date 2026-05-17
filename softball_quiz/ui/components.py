@@ -8,7 +8,9 @@ from softball_quiz.models import (
     AnswerOption,
     DefensivePosition,
     POSITION_ORDER,
+    RUNNER_ROLE_ORDER,
     QuizQuestion,
+    RunnerRole,
     RunnerState,
 )
 from softball_quiz.ui import theme
@@ -46,7 +48,7 @@ class HeaderBar:
                                         color=ft.Colors.WHITE,
                                     ),
                                     ft.Text(
-                                        kids_text("まもる場所・ランナー・アウト・打ったボールを見て、はじめの動きをえらぶ"),
+                                        kids_text("まもる場所・走る人・アウト・ボールの動きを見て、はじめの動きをえらぶ"),
                                         size=13,
                                         color="#DCE9DF",
                                     ),
@@ -90,24 +92,42 @@ class PositionSelector:
         self,
         *,
         selected_position: DefensivePosition | None,
-        counts: dict[DefensivePosition, int],
-        on_select: Callable[[DefensivePosition | None], None],
+        selected_runner_role: RunnerRole | None,
+        position_counts: dict[DefensivePosition, int],
+        runner_counts: dict[RunnerRole, int],
+        on_select_all: Callable[[], None],
+        on_select_position: Callable[[DefensivePosition | None], None],
+        on_select_runner_role: Callable[[RunnerRole], None],
     ) -> ft.Control:
-        buttons = [
+        all_selected = selected_position is None and selected_runner_role is None
+        all_count = sum(position_counts.values()) + sum(runner_counts.values())
+        all_buttons = [
             self._button(
                 label="ぜんぶ",
-                count=sum(counts.values()),
-                selected=selected_position is None,
-                on_click=lambda: on_select(None),
+                count=all_count,
+                selected=all_selected,
+                on_click=on_select_all,
             )
         ]
+        defense_buttons: list[ft.Control] = []
         for position in POSITION_ORDER:
-            buttons.append(
+            defense_buttons.append(
                 self._button(
                     label=position.label,
-                    count=counts.get(position, 0),
-                    selected=selected_position == position,
-                    on_click=lambda position=position: on_select(position),
+                    count=position_counts.get(position, 0),
+                    selected=selected_position == position and selected_runner_role is None,
+                    on_click=lambda position=position: on_select_position(position),
+                )
+            )
+
+        runner_buttons: list[ft.Control] = []
+        for role in RUNNER_ROLE_ORDER:
+            runner_buttons.append(
+                self._button(
+                    label=role.label,
+                    count=runner_counts.get(role, 0),
+                    selected=selected_runner_role == role,
+                    on_click=lambda role=role: on_select_runner_role(role),
                 )
             )
 
@@ -124,14 +144,18 @@ class PositionSelector:
                         controls=[
                             ft.Icon(ft.Icons.SPORTS_BASEBALL, size=20, color=theme.PRIMARY),
                             ft.Text(
-                                "まもる場所をえらぶ",
+                                "クイズのしゅるいをえらぶ",
                                 size=16,
                                 weight=ft.FontWeight.BOLD,
                                 color=theme.TEXT,
                             ),
                         ],
                     ),
-                    ft.Row(spacing=8, run_spacing=8, wrap=True, controls=buttons),
+                    ft.Row(spacing=8, run_spacing=8, wrap=True, controls=all_buttons),
+                    ft.Text("まもる場所", size=12, color=theme.TEXT_MUTED),
+                    ft.Row(spacing=8, run_spacing=8, wrap=True, controls=defense_buttons),
+                    ft.Text("走る人", size=12, color=theme.TEXT_MUTED),
+                    ft.Row(spacing=8, run_spacing=8, wrap=True, controls=runner_buttons),
                 ],
             ),
         )
@@ -190,11 +214,19 @@ class ScenarioPanel:
                             _status_chip(scenario.difficulty.value, ft.Icons.SCHOOL, theme.WARNING),
                         ],
                     ),
-                    self._field.render(scenario.runners, scenario.position),
+                    self._field.render(
+                        scenario.runners,
+                        scenario.position,
+                        scenario.runner_role,
+                    ),
                     ft.Column(
                         spacing=10,
                         controls=[
-                            _info_line("まもる場所", scenario.position.label, ft.Icons.SHIELD),
+                            _info_line(
+                                "まもる場所" if scenario.position is not None else "走る人",
+                                scenario.actor_label,
+                                ft.Icons.SHIELD if scenario.position is not None else ft.Icons.DIRECTIONS_RUN,
+                            ),
                             _info_line("ランナー", scenario.runners.label, ft.Icons.DIRECTIONS_RUN),
                             _info_line("ボールの動き", kids_text(scenario.batted_ball), ft.Icons.SPORTS_BASEBALL),
                             _info_line("メモ", kids_text(scenario.fielding_note), ft.Icons.INFO),
@@ -206,7 +238,12 @@ class ScenarioPanel:
 
 
 class FieldDiagram:
-    def render(self, runners: RunnerState, position: DefensivePosition) -> ft.Control:
+    def render(
+        self,
+        runners: RunnerState,
+        position: DefensivePosition | None,
+        runner_role: RunnerRole | None,
+    ) -> ft.Control:
         return ft.Container(
             height=345,
             bgcolor=theme.FIELD,
@@ -226,23 +263,50 @@ class FieldDiagram:
                         border_radius=4,
                     ),
                     self._label("がいや", 136, 8),
-                    self._base("二るい", runners.second, 134, 62),
-                    self._base("三るい", runners.third, 48, 152),
-                    self._base("一るい", runners.first, 220, 152),
-                    self._base("本るい", False, 134, 286),
+                    self._base(
+                        "二るい",
+                        runners.second,
+                        self._active_runner_base(runner_role, RunnerRole.SECOND_RUNNER),
+                        134,
+                        62,
+                    ),
+                    self._base(
+                        "三るい",
+                        runners.third,
+                        self._active_runner_base(runner_role, RunnerRole.THIRD_RUNNER),
+                        48,
+                        152,
+                    ),
+                    self._base(
+                        "一るい",
+                        runners.first,
+                        self._active_runner_base(runner_role, RunnerRole.FIRST_RUNNER),
+                        220,
+                        152,
+                    ),
+                    self._base(
+                        "本るい",
+                        False,
+                        runner_role == RunnerRole.BATTER_RUNNER,
+                        134,
+                        286,
+                    ),
                     *self._fielders(position),
                 ],
             ),
         )
 
-    def _base(self, label: str, occupied: bool, left: int, top: int) -> ft.Control:
+    def _base(self, label: str, occupied: bool, active: bool, left: int, top: int) -> ft.Control:
         return ft.Container(
             left=left,
             top=top,
             width=52,
             height=38,
-            bgcolor=theme.BASE_OCCUPIED if occupied else theme.BASE_EMPTY,
-            border=ft.Border.all(2, theme.PRIMARY if occupied else "#D8CBA7"),
+            bgcolor=theme.BASE_OCCUPIED if occupied or active else theme.BASE_EMPTY,
+            border=ft.Border.all(
+                3 if active else 2,
+                theme.ERROR if active else theme.PRIMARY if occupied else "#D8CBA7",
+            ),
             border_radius=6,
             alignment=ft.Alignment.CENTER,
             content=ft.Column(
@@ -251,9 +315,9 @@ class FieldDiagram:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
                     ft.Icon(
-                        ft.Icons.PERSON if occupied else ft.Icons.SQUARE_OUTLINED,
+                        ft.Icons.DIRECTIONS_RUN if active else ft.Icons.PERSON if occupied else ft.Icons.SQUARE_OUTLINED,
                         size=15,
-                        color=theme.PRIMARY_DARK if occupied else theme.TEXT_MUTED,
+                        color=theme.ERROR if active else theme.PRIMARY_DARK if occupied else theme.TEXT_MUTED,
                     ),
                     ft.Text(label, size=11, color=theme.TEXT),
                 ],
@@ -267,7 +331,10 @@ class FieldDiagram:
             content=ft.Text(text, size=12, color=theme.TEXT_MUTED),
         )
 
-    def _fielders(self, active_position: DefensivePosition) -> list[ft.Control]:
+    def _active_runner_base(self, runner_role: RunnerRole | None, role: RunnerRole) -> bool:
+        return runner_role == role
+
+    def _fielders(self, active_position: DefensivePosition | None) -> list[ft.Control]:
         spots = {
             DefensivePosition.PITCHER: ("ピッチャー", 126, 150),
             DefensivePosition.CATCHER: ("キャッチャー", 126, 315),
@@ -315,7 +382,7 @@ class QuestionPanel:
         controls: list[ft.Control] = [
             ft.Text(kids_text(question.prompt), size=22, weight=ft.FontWeight.BOLD, color=theme.TEXT),
             ft.Text(
-                kids_text("えらんだ場所の人として、いちばん先にすることをこたえてください。"),
+                kids_text(self._helper_text(question)),
                 size=13,
                 color=theme.TEXT_MUTED,
             ),
@@ -337,6 +404,11 @@ class QuestionPanel:
             padding=ft.Padding(18, 18, 18, 18),
             content=ft.Column(spacing=12, controls=controls),
         )
+
+    def _helper_text(self, question: QuizQuestion) -> str:
+        if question.scenario.runner_role is not None:
+            return "えらんだ走る人として、つぎにすることをこたえてください。"
+        return "えらんだ場所の人として、いちばん先にすることをこたえてください。"
 
 
 class OptionButton:

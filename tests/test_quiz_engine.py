@@ -1,8 +1,14 @@
 import random
 import unittest
 
-from softball_quiz.data import QUESTIONS, question_counts_by_position, questions_for_position
-from softball_quiz.models import POSITION_ORDER
+from softball_quiz.data import (
+    QUESTIONS,
+    question_counts_by_position,
+    question_counts_by_runner_role,
+    questions_for_position,
+    questions_for_runner_role,
+)
+from softball_quiz.models import POSITION_ORDER, RUNNER_ROLE_ORDER
 from softball_quiz.services import QuizEngine
 from softball_quiz.ui.kids_text import kids_text
 
@@ -28,6 +34,11 @@ class QuestionDataTest(unittest.TestCase):
         for position in POSITION_ORDER:
             self.assertGreaterEqual(counts[position], 6, msg=position.value)
 
+    def test_each_runner_role_has_questions(self) -> None:
+        counts = question_counts_by_runner_role()
+        for role in RUNNER_ROLE_ORDER:
+            self.assertGreaterEqual(counts[role], 6, msg=role.value)
+
     def test_filter_returns_only_selected_position(self) -> None:
         for position in POSITION_ORDER:
             questions = questions_for_position(position)
@@ -35,6 +46,15 @@ class QuestionDataTest(unittest.TestCase):
             self.assertTrue(
                 all(question.scenario.position == position for question in questions),
                 msg=position.value,
+            )
+
+    def test_runner_filter_returns_only_selected_role(self) -> None:
+        for role in RUNNER_ROLE_ORDER:
+            questions = questions_for_runner_role(role)
+            self.assertTrue(questions, msg=role.value)
+            self.assertTrue(
+                all(question.scenario.runner_role == role for question in questions),
+                msg=role.value,
             )
 
     def test_cover_questions_are_anticipatory(self) -> None:
