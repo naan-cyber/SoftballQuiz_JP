@@ -355,9 +355,89 @@ RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
 )
 
 
+GAME_FLOW_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
+    make_question(
+        question_id="rule-before-play-ball",
+        rule_topic=RuleTopic.GAME_FLOW,
+        outs=0,
+        runners=RunnerState(),
+        ball="しんぱんがまだプレイボールと言っていない",
+        note="これから試合を始めるところ。",
+        prompt="選手はどうする？",
+        options=(
+            ("自分の場所につき、しんぱんの合図を待つ", True, "プレイボールの合図が出てから試合が始まります。先に投げたり走ったりしません。"),
+            ("先にピッチャーが投げる", False, "まだ試合開始の合図が出ていません。"),
+            ("ランナーが先に走り出す", False, "プレイボール前は、勝手に始めません。"),
+        ),
+        point="試合は、しんぱんのプレイボールの合図で始まります。",
+    ),
+    make_question(
+        question_id="rule-defense-ready-before-play-ball",
+        rule_topic=RuleTopic.GAME_FLOW,
+        outs=0,
+        runners=RunnerState(),
+        ball="一回の表が始まる前",
+        note="守るチームがグラウンドに出ている。",
+        prompt="プレイボール前にすることは？",
+        options=(
+            ("守る場所をたしかめ、ボールが来た時の動きを考える", True, "始まる前に、自分の場所とアウトの取り方をたしかめます。"),
+            ("ベンチでずっと話している", False, "守るチームは、守る場所につきます。"),
+            ("バットを持って打つ準備をする", False, "守るチームなので、グラウンドで守る準備をします。"),
+        ),
+        point="プレイボール前は、自分の場所と次の動きをたしかめます。",
+    ),
+    make_question(
+        question_id="rule-three-outs-change-sides",
+        rule_topic=RuleTopic.GAME_FLOW,
+        outs=2,
+        runners=RunnerState(first=True),
+        ball="守るチームが3つ目のアウトをとった",
+        note="その回の攻げきが終わった。",
+        prompt="次にどうする？",
+        options=(
+            ("攻げきと守りを交代する", True, "3アウトになったら、その回の攻げきは終わりです。チームが入れかわります。"),
+            ("同じチームがもう一度打つ", False, "3アウトで攻守交代です。"),
+            ("すぐゲームセットにする", False, "まだ決められた回が終わっていなければ試合は続きます。"),
+        ),
+        point="3アウトで攻守交代になります。",
+    ),
+    make_question(
+        question_id="rule-change-sides-hustle",
+        rule_topic=RuleTopic.GAME_FLOW,
+        outs=2,
+        runners=RunnerState(),
+        ball="3アウトで攻守交代になった",
+        note="次は自分のチームが守る番。",
+        prompt="どう動く？",
+        options=(
+            ("すぐ守る場所へ行き、準備する", True, "攻守交代はすばやく動くと、試合がスムーズに進みます。"),
+            ("ベンチで長く休んでから出る", False, "次の回を始めるために、早く守る場所へ行きます。"),
+            ("相手チームのベンチへ行く", False, "自分のチームの守る場所へ向かいます。"),
+        ),
+        point="攻守交代では、すばやく準備します。",
+    ),
+    make_question(
+        question_id="rule-after-game-set",
+        rule_topic=RuleTopic.GAME_FLOW,
+        outs=0,
+        runners=RunnerState(),
+        ball="しんぱんがゲームセットと言った",
+        note="試合が終わったところ。",
+        prompt="選手はどうする？",
+        options=(
+            ("あいさつをして、道具を片づける", True, "試合が終わったら、相手やしんぱんにあいさつし、道具を片づけます。"),
+            ("まだ勝手にもう一回始める", False, "ゲームセットで試合は終わりです。"),
+            ("ボールをグラウンドに置いたまま帰る", False, "使った道具は片づけます。"),
+        ),
+        point="ゲームセット後は、あいさつと片づけまで大切です。",
+    ),
+)
+
+
 RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     *OUT_RULE_QUESTIONS,
     *FORCE_TAG_RULE_QUESTIONS,
     *FAIR_FOUL_RULE_QUESTIONS,
     *RUNNING_RULE_QUESTIONS,
+    *GAME_FLOW_RULE_QUESTIONS,
 )

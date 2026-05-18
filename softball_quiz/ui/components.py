@@ -252,6 +252,7 @@ class ScenarioPanel:
                             _status_chip(scenario.difficulty.value, ft.Icons.SCHOOL, theme.WARNING),
                         ],
                     ),
+                    _role_banner(self._actor_description(question), self._actor_label_icon(question)),
                     ft.Row(
                         spacing=12,
                         run_spacing=12,
@@ -319,6 +320,24 @@ class ScenarioPanel:
         if question.scenario.runner_role is not None:
             return ft.Icons.DIRECTIONS_RUN
         return ft.Icons.MENU_BOOK
+
+    def _actor_description(self, question: QuizQuestion) -> str:
+        scenario = question.scenario
+        if scenario.position is not None:
+            return f"あなたは {scenario.actor_label} として、まもりのうごきをえらびます。"
+        if scenario.runner_role is not None:
+            return f"あなたは {scenario.actor_label} として、走り方をえらびます。"
+        if scenario.rule_topic == RuleTopic.OUTS:
+            return "これはアウトのルールです。場面を見て、どうなるかをえらびます。"
+        if scenario.rule_topic == RuleTopic.FORCE_TAG:
+            return "これはフォース・タッチのルールです。場面を見て、どうアウトにするかをえらびます。"
+        if scenario.rule_topic == RuleTopic.FAIR_FOUL:
+            return "これはフェア・ファウルのルールです。ボールの場所を見て、どうなるかをえらびます。"
+        if scenario.rule_topic == RuleTopic.RUNNING_RULES:
+            return "これは走るルールです。ランナーやバッターがどうするかをえらびます。"
+        if scenario.rule_topic == RuleTopic.GAME_FLOW:
+            return "これはしあいの流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
+        return "これはきほんルールです。場面を見て、正しい決まりをえらびます。"
 
 
 class FieldDiagram:
@@ -714,6 +733,29 @@ def _info_line(label: str, value: str, icon: ft.Icons) -> ft.Control:
                 ],
             ),
         ],
+    )
+
+
+def _role_banner(text: str, icon: ft.Icons) -> ft.Control:
+    return ft.Container(
+        bgcolor="#F4FAF6",
+        border=ft.Border.all(1, "#BFE4CA"),
+        border_radius=theme.CARD_RADIUS,
+        padding=ft.Padding(12, 10, 12, 10),
+        content=ft.Row(
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Icon(icon, size=20, color=theme.PRIMARY),
+                ft.Text(
+                    kids_text(text),
+                    size=15,
+                    color=theme.PRIMARY_DARK,
+                    weight=ft.FontWeight.BOLD,
+                    expand=True,
+                ),
+            ],
+        ),
     )
 
 
