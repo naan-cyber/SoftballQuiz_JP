@@ -233,7 +233,7 @@ THIRD_BASE_QUESTIONS: tuple[QuizQuestion, ...] = (
         outs=1,
         runners=RunnerState(first=True, second=True, third=True),
         ball="三るい手前の強いゴロ",
-        note="満るい（まんるい）。本るいへなげても間に合う強さ。",
+        note="満るい。本るいへなげても間に合う強さ。",
         options=(
             ("本るいへなげてフォースアウトをねらう", True, "満るいなら本るいもふむだけでアウトです。点をふせぎます。"),
             ("外野へなげる", False, "内野ゴロなので、近いアウトをとります。"),

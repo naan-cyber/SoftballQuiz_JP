@@ -168,7 +168,7 @@ class PositionSelector:
                         controls=[
                             ft.Icon(ft.Icons.SPORTS_BASEBALL, size=20, color=theme.PRIMARY),
                             ft.Text(
-                                "クイズのしゅるいをえらぶ",
+                                kids_text("クイズのしゅるいをえらぶ"),
                                 size=16,
                                 weight=ft.FontWeight.BOLD,
                                 color=theme.TEXT,
@@ -176,9 +176,9 @@ class PositionSelector:
                         ],
                     ),
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=all_buttons),
-                    ft.Text("まもる場所", size=12, color=theme.TEXT_MUTED),
+                    ft.Text(kids_text("まもる場所"), size=12, color=theme.TEXT_MUTED),
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=defense_buttons),
-                    ft.Text("走る人", size=12, color=theme.TEXT_MUTED),
+                    ft.Text(kids_text("走る人"), size=12, color=theme.TEXT_MUTED),
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=runner_buttons),
                     ft.Text("きほんルール", size=12, color=theme.TEXT_MUTED),
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=rule_buttons),
@@ -210,7 +210,7 @@ class PositionSelector:
                             size=17,
                             color=theme.PRIMARY if selected else theme.TEXT_MUTED,
                         ),
-                        ft.Text(label, size=13, weight=ft.FontWeight.W_600, color=theme.TEXT),
+                        ft.Text(kids_text(label), size=13, weight=ft.FontWeight.W_600, color=theme.TEXT),
                         ft.Text(f"{count}もん", size=12, color=theme.TEXT_MUTED),
                     ],
                 ),
@@ -664,9 +664,9 @@ class ResultPanel:
                         weight=ft.FontWeight.W_600,
                         color=theme.PRIMARY_DARK,
                     ),
-                    ft.Text(message, text_align=ft.TextAlign.CENTER, color=theme.TEXT_MUTED),
+                    ft.Text(kids_text(message), text_align=ft.TextAlign.CENTER, color=theme.TEXT_MUTED),
                     ft.Button(
-                        content="もう一度",
+                        content=kids_text("もう一度"),
                         icon=ft.Icons.REPLAY,
                         on_click=on_restart,
                     ),
@@ -688,12 +688,12 @@ class NavigationBar:
             alignment=ft.MainAxisAlignment.END,
             controls=[
                 ft.Button(
-                    content="もう一度",
+                    content=kids_text("もう一度"),
                     icon=ft.Icons.REPLAY,
                     on_click=on_restart,
                 ),
                 ft.Button(
-                    content="けっかを見る" if is_finished else "つぎへ",
+                    content=kids_text("けっかを見る") if is_finished else "つぎへ",
                     icon=ft.Icons.ARROW_FORWARD,
                     disabled=not answered,
                     on_click=on_next,
@@ -712,7 +712,7 @@ def _status_chip(text: str, icon: ft.Icons, color: str) -> ft.Control:
             spacing=6,
             controls=[
                 ft.Icon(icon, size=16, color=color),
-                ft.Text(text, size=13, weight=ft.FontWeight.W_600, color=theme.TEXT),
+                ft.Text(kids_text(text), size=13, weight=ft.FontWeight.W_600, color=theme.TEXT),
             ],
         ),
     )
@@ -728,8 +728,8 @@ def _info_line(label: str, value: str, icon: ft.Icons) -> ft.Control:
                 spacing=2,
                 expand=True,
                 controls=[
-                    ft.Text(label, size=12, color=theme.TEXT_MUTED),
-                    ft.Text(value, size=14, color=theme.TEXT, weight=ft.FontWeight.W_600),
+                    ft.Text(kids_text(label), size=12, color=theme.TEXT_MUTED),
+                    ft.Text(kids_text(value), size=14, color=theme.TEXT, weight=ft.FontWeight.W_600),
                 ],
             ),
         ],
@@ -775,9 +775,9 @@ def _summary_tile(label: str, value: str, icon: ft.Icons, width: int) -> ft.Cont
                     spacing=2,
                     expand=True,
                     controls=[
-                        ft.Text(label, size=12, color=theme.TEXT_MUTED),
+                        ft.Text(kids_text(label), size=12, color=theme.TEXT_MUTED),
                         ft.Text(
-                            value,
+                            kids_text(value),
                             size=15,
                             color=theme.TEXT,
                             weight=ft.FontWeight.W_600,

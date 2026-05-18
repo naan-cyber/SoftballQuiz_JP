@@ -84,7 +84,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         outs=2,
         runners=RunnerState(first=True, second=True, third=True),
         ball="ピッチャー前のゆるいゴロ",
-        note="満るい（まんるい）。キャッチャーが本るいに入っている。",
+        note="満るい。キャッチャーが本るいに入っている。",
         options=(
             ("近い本るいへなげて、ふむだけのアウトをとる", True, "2アウト満るいでは、近いフォースアウトで終わらせるのがきほんです。"),
             ("外野へなげる", False, "内野ゴロでアウトをとれるるいがあります。"),
@@ -117,7 +117,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         outs=1,
         runners=RunnerState(first=True, second=True, third=True),
         ball="本るい前の小さいゴロ",
-        note="満るい（まんるい）。三るいランナーが本るいへ走る。",
+        note="満るい。三るいランナーが本るいへ走る。",
         options=(
             ("本るいベースをふんでアウトにし、余ゆうがあれば一るいへなげる", True, "満るいでは本るいもフォースアウトです。まず点をふせぎます。"),
             ("一るいへ先になげる", False, "点が入りやすくなります。まず本るいアウトを考えます。"),
