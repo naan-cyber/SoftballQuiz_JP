@@ -7,6 +7,7 @@ from softball_quiz.models import (
     DefensivePosition,
     Difficulty,
     QuizQuestion,
+    RuleTopic,
     RunnerRole,
     RunnerState,
     Scenario,
@@ -26,11 +27,13 @@ def make_question(
     point: str,
     position: DefensivePosition | None = None,
     runner_role: RunnerRole | None = None,
+    rule_topic: RuleTopic | None = None,
     prompt: str = "あなたがまずやることは？",
     difficulty: Difficulty = Difficulty.BASIC,
 ) -> QuizQuestion:
-    if (position is None) == (runner_role is None):
-        raise ValueError("Set exactly one of position or runner_role.")
+    actor_count = sum(actor is not None for actor in (position, runner_role, rule_topic))
+    if actor_count != 1:
+        raise ValueError("Set exactly one of position, runner_role, or rule_topic.")
 
     option_ids = ("a", "b", "c", "d")
     return QuizQuestion(
@@ -42,6 +45,7 @@ def make_question(
             fielding_note=note,
             position=position,
             runner_role=runner_role,
+            rule_topic=rule_topic,
             difficulty=difficulty,
         ),
         prompt=prompt,

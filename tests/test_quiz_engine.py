@@ -4,11 +4,13 @@ import unittest
 from softball_quiz.data import (
     QUESTIONS,
     question_counts_by_position,
+    question_counts_by_rule_topic,
     question_counts_by_runner_role,
     questions_for_position,
+    questions_for_rule_topic,
     questions_for_runner_role,
 )
-from softball_quiz.models import POSITION_ORDER, RUNNER_ROLE_ORDER
+from softball_quiz.models import POSITION_ORDER, RULE_TOPIC_ORDER, RUNNER_ROLE_ORDER
 from softball_quiz.services import QuizEngine
 from softball_quiz.ui.kids_text import kids_text
 
@@ -39,6 +41,11 @@ class QuestionDataTest(unittest.TestCase):
         for role in RUNNER_ROLE_ORDER:
             self.assertGreaterEqual(counts[role], 6, msg=role.value)
 
+    def test_each_rule_topic_has_questions(self) -> None:
+        counts = question_counts_by_rule_topic()
+        for topic in RULE_TOPIC_ORDER:
+            self.assertGreaterEqual(counts[topic], 5, msg=topic.value)
+
     def test_filter_returns_only_selected_position(self) -> None:
         for position in POSITION_ORDER:
             questions = questions_for_position(position)
@@ -55,6 +62,15 @@ class QuestionDataTest(unittest.TestCase):
             self.assertTrue(
                 all(question.scenario.runner_role == role for question in questions),
                 msg=role.value,
+            )
+
+    def test_rule_filter_returns_only_selected_topic(self) -> None:
+        for topic in RULE_TOPIC_ORDER:
+            questions = questions_for_rule_topic(topic)
+            self.assertTrue(questions, msg=topic.value)
+            self.assertTrue(
+                all(question.scenario.rule_topic == topic for question in questions),
+                msg=topic.value,
             )
 
     def test_cover_questions_are_anticipatory(self) -> None:
@@ -104,6 +120,15 @@ class QuizEngineTest(unittest.TestCase):
         self.assertEqual(0, engine.score)
         self.assertEqual(1, engine.current_number)
         self.assertIsNone(engine.selected_option_id)
+
+    def test_options_are_shuffled_without_breaking_correct_answer(self) -> None:
+        engine = QuizEngine(QUESTIONS, shuffle=False, rng=random.Random(1))
+        original_option_ids = [option.id for option in QUESTIONS[0].options]
+        shown_option_ids = [option.id for option in engine.current_question.options]
+
+        self.assertCountEqual(original_option_ids, shown_option_ids)
+        self.assertNotEqual(original_option_ids, shown_option_ids)
+        self.assertTrue(engine.select_answer(engine.current_question.correct_option.id))
 
 
 class KidsTextTest(unittest.TestCase):

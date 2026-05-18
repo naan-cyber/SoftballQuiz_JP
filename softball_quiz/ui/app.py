@@ -4,11 +4,13 @@ import flet as ft
 
 from softball_quiz.data import (
     question_counts_by_position,
+    question_counts_by_rule_topic,
     question_counts_by_runner_role,
     questions_for_position,
+    questions_for_rule_topic,
     questions_for_runner_role,
 )
-from softball_quiz.models import DefensivePosition, RunnerRole
+from softball_quiz.models import DefensivePosition, RuleTopic, RunnerRole
 from softball_quiz.services import QuizEngine
 from softball_quiz.ui import theme
 from softball_quiz.ui.components import (
@@ -27,6 +29,7 @@ class SoftballQuizApp:
         self.page = page
         self.selected_position: DefensivePosition | None = None
         self.selected_runner_role: RunnerRole | None = None
+        self.selected_rule_topic: RuleTopic | None = None
         self.engine = QuizEngine(questions_for_position(self.selected_position))
         self.header = HeaderBar()
         self.position_selector = PositionSelector()
@@ -70,11 +73,14 @@ class SoftballQuizApp:
                             self.position_selector.render(
                                 selected_position=self.selected_position,
                                 selected_runner_role=self.selected_runner_role,
+                                selected_rule_topic=self.selected_rule_topic,
                                 position_counts=question_counts_by_position(),
                                 runner_counts=question_counts_by_runner_role(),
+                                rule_counts=question_counts_by_rule_topic(),
                                 on_select_all=self._select_all,
                                 on_select_position=self._select_position,
                                 on_select_runner_role=self._select_runner_role,
+                                on_select_rule_topic=self._select_rule_topic,
                             ),
                             self._render_body(),
                         ],
@@ -93,36 +99,42 @@ class SoftballQuizApp:
             )
 
         question = self.engine.current_question
-        return ft.Row(
-            spacing=18,
-            vertical_alignment=ft.CrossAxisAlignment.START,
+        return ft.Column(
+            spacing=16,
             controls=[
-                ft.Container(
-                    width=360,
-                    content=self.scenario_panel.render(question),
-                ),
-                ft.Container(
-                    expand=True,
-                    content=ft.Column(
-                        spacing=14,
-                        controls=[
-                            self.question_panel.render(
-                                question=question,
-                                selected_option_id=self.engine.selected_option_id,
-                                on_select=self._select_answer,
+                self.scenario_panel.render(question),
+                ft.Row(
+                    spacing=18,
+                    vertical_alignment=ft.CrossAxisAlignment.START,
+                    controls=[
+                        ft.Container(
+                            width=360,
+                            content=self.scenario_panel.render_field(question),
+                        ),
+                        ft.Container(
+                            expand=True,
+                            content=ft.Column(
+                                spacing=14,
+                                controls=[
+                                    self.question_panel.render(
+                                        question=question,
+                                        selected_option_id=self.engine.selected_option_id,
+                                        on_select=self._select_answer,
+                                    ),
+                                    self.feedback_panel.render(
+                                        question,
+                                        self.engine.selected_option_id,
+                                    ),
+                                    self.navigation.render(
+                                        answered=self.engine.answered,
+                                        is_finished=self.engine.is_finished,
+                                        on_next=self._next,
+                                        on_restart=self._restart,
+                                    ),
+                                ],
                             ),
-                            self.feedback_panel.render(
-                                question,
-                                self.engine.selected_option_id,
-                            ),
-                            self.navigation.render(
-                                answered=self.engine.answered,
-                                is_finished=self.engine.is_finished,
-                                on_next=self._next,
-                                on_restart=self._restart,
-                            ),
-                        ],
-                    ),
+                        ),
+                    ],
                 ),
             ],
         )
@@ -134,6 +146,7 @@ class SoftballQuizApp:
     def _select_position(self, position: DefensivePosition | None) -> None:
         self.selected_position = position
         self.selected_runner_role = None
+        self.selected_rule_topic = None
         self.engine = QuizEngine(questions_for_position(position))
         self.show_result = False
         self._render()
@@ -141,13 +154,23 @@ class SoftballQuizApp:
     def _select_runner_role(self, role: RunnerRole) -> None:
         self.selected_position = None
         self.selected_runner_role = role
+        self.selected_rule_topic = None
         self.engine = QuizEngine(questions_for_runner_role(role))
+        self.show_result = False
+        self._render()
+
+    def _select_rule_topic(self, topic: RuleTopic) -> None:
+        self.selected_position = None
+        self.selected_runner_role = None
+        self.selected_rule_topic = topic
+        self.engine = QuizEngine(questions_for_rule_topic(topic))
         self.show_result = False
         self._render()
 
     def _select_all(self) -> None:
         self.selected_position = None
         self.selected_runner_role = None
+        self.selected_rule_topic = None
         self.engine = QuizEngine(questions_for_position(None))
         self.show_result = False
         self._render()
@@ -160,7 +183,9 @@ class SoftballQuizApp:
         self._render()
 
     def _restart(self, _: ft.Event[ft.Button]) -> None:
-        if self.selected_runner_role is not None:
+        if self.selected_rule_topic is not None:
+            questions = questions_for_rule_topic(self.selected_rule_topic)
+        elif self.selected_runner_role is not None:
             questions = questions_for_runner_role(self.selected_runner_role)
         else:
             questions = questions_for_position(self.selected_position)

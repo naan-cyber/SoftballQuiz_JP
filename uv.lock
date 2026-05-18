@@ -903,7 +903,7 @@ wheels = [
 ]
 
 [[package]]
-name = "softball-defense-quiz"
+name = "softball-next-play-quiz"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

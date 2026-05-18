@@ -72,6 +72,30 @@ RUNNER_ROLE_ORDER: tuple[RunnerRole, ...] = (
 )
 
 
+class RuleTopic(str, Enum):
+    OUTS = "outs"
+    FORCE_TAG = "force_tag"
+    FAIR_FOUL = "fair_foul"
+    RUNNING_RULES = "running_rules"
+
+    @property
+    def label(self) -> str:
+        return {
+            RuleTopic.OUTS: "アウト",
+            RuleTopic.FORCE_TAG: "フォース・タッチ",
+            RuleTopic.FAIR_FOUL: "フェア・ファウル",
+            RuleTopic.RUNNING_RULES: "走るルール",
+        }[self]
+
+
+RULE_TOPIC_ORDER: tuple[RuleTopic, ...] = (
+    RuleTopic.OUTS,
+    RuleTopic.FORCE_TAG,
+    RuleTopic.FAIR_FOUL,
+    RuleTopic.RUNNING_RULES,
+)
+
+
 @dataclass(frozen=True)
 class RunnerState:
     first: bool = False
@@ -104,6 +128,7 @@ class Scenario:
     fielding_note: str
     position: DefensivePosition | None = None
     runner_role: RunnerRole | None = None
+    rule_topic: RuleTopic | None = None
     difficulty: Difficulty = Difficulty.BASIC
 
     @property
@@ -116,6 +141,8 @@ class Scenario:
             return self.position.label
         if self.runner_role is not None:
             return self.runner_role.label
+        if self.rule_topic is not None:
+            return self.rule_topic.label
         return "ぜんぶ"
 
 

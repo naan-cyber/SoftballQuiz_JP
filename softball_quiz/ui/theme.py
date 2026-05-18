@@ -1,4 +1,4 @@
-APP_TITLE = "ソフトボール まもり方クイズ"
+APP_TITLE = "ソフトボール つぎはどうする？"
 
 BACKGROUND = "#F6F8F4"
 SURFACE = "#FFFFFF"

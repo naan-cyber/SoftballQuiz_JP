@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from softball_quiz.models import AnswerOption, QuizQuestion
 
@@ -74,6 +74,7 @@ class QuizEngine:
         self._questions = list(self._source_questions)
         if self._shuffle:
             self._rng.shuffle(self._questions)
+        self._questions = [self._with_shuffled_options(question) for question in self._questions]
         self._index = 0
         self._score = 0
         self._selected_option_id = None
@@ -116,3 +117,8 @@ class QuizEngine:
             if option.id == option_id:
                 return option
         raise ValueError(f"Unknown option id: {option_id}")
+
+    def _with_shuffled_options(self, question: QuizQuestion) -> QuizQuestion:
+        options = list(question.options)
+        self._rng.shuffle(options)
+        return replace(question, options=tuple(options))

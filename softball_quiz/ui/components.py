@@ -8,8 +8,10 @@ from softball_quiz.models import (
     AnswerOption,
     DefensivePosition,
     POSITION_ORDER,
+    RULE_TOPIC_ORDER,
     RUNNER_ROLE_ORDER,
     QuizQuestion,
+    RuleTopic,
     RunnerRole,
     RunnerState,
 )
@@ -93,14 +95,21 @@ class PositionSelector:
         *,
         selected_position: DefensivePosition | None,
         selected_runner_role: RunnerRole | None,
+        selected_rule_topic: RuleTopic | None,
         position_counts: dict[DefensivePosition, int],
         runner_counts: dict[RunnerRole, int],
+        rule_counts: dict[RuleTopic, int],
         on_select_all: Callable[[], None],
         on_select_position: Callable[[DefensivePosition | None], None],
         on_select_runner_role: Callable[[RunnerRole], None],
+        on_select_rule_topic: Callable[[RuleTopic], None],
     ) -> ft.Control:
-        all_selected = selected_position is None and selected_runner_role is None
-        all_count = sum(position_counts.values()) + sum(runner_counts.values())
+        all_selected = (
+            selected_position is None
+            and selected_runner_role is None
+            and selected_rule_topic is None
+        )
+        all_count = sum(position_counts.values()) + sum(runner_counts.values()) + sum(rule_counts.values())
         all_buttons = [
             self._button(
                 label="ぜんぶ",
@@ -115,7 +124,11 @@ class PositionSelector:
                 self._button(
                     label=position.label,
                     count=position_counts.get(position, 0),
-                    selected=selected_position == position and selected_runner_role is None,
+                    selected=(
+                        selected_position == position
+                        and selected_runner_role is None
+                        and selected_rule_topic is None
+                    ),
                     on_click=lambda position=position: on_select_position(position),
                 )
             )
@@ -126,8 +139,19 @@ class PositionSelector:
                 self._button(
                     label=role.label,
                     count=runner_counts.get(role, 0),
-                    selected=selected_runner_role == role,
+                    selected=selected_runner_role == role and selected_rule_topic is None,
                     on_click=lambda role=role: on_select_runner_role(role),
+                )
+            )
+
+        rule_buttons: list[ft.Control] = []
+        for topic in RULE_TOPIC_ORDER:
+            rule_buttons.append(
+                self._button(
+                    label=topic.label,
+                    count=rule_counts.get(topic, 0),
+                    selected=selected_rule_topic == topic,
+                    on_click=lambda topic=topic: on_select_rule_topic(topic),
                 )
             )
 
@@ -156,6 +180,8 @@ class PositionSelector:
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=defense_buttons),
                     ft.Text("走る人", size=12, color=theme.TEXT_MUTED),
                     ft.Row(spacing=8, run_spacing=8, wrap=True, controls=runner_buttons),
+                    ft.Text("きほんルール", size=12, color=theme.TEXT_MUTED),
+                    ft.Row(spacing=8, run_spacing=8, wrap=True, controls=rule_buttons),
                 ],
             ),
         )
@@ -199,42 +225,100 @@ class ScenarioPanel:
     def render(self, question: QuizQuestion) -> ft.Control:
         scenario = question.scenario
         return ft.Container(
-            bgcolor=theme.SURFACE,
-            border=ft.Border.all(1, theme.BORDER),
+            bgcolor="#FFFDF6",
+            border=ft.Border.all(2, theme.SECONDARY),
             border_radius=theme.CARD_RADIUS,
-            padding=ft.Padding(18, 18, 18, 18),
+            padding=ft.Padding(18, 16, 18, 16),
             content=ft.Column(
-                spacing=16,
+                spacing=12,
                 controls=[
                     ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            _status_chip(scenario.outs_label, ft.Icons.OUTBOUND, theme.PRIMARY),
+                            ft.Row(
+                                spacing=8,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Icon(ft.Icons.INFO, size=24, color=theme.SECONDARY),
+                                    ft.Text(
+                                        "いまのばめん",
+                                        size=20,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=theme.TEXT,
+                                    ),
+                                ],
+                            ),
                             _status_chip(scenario.difficulty.value, ft.Icons.SCHOOL, theme.WARNING),
+                        ],
+                    ),
+                    ft.Row(
+                        spacing=12,
+                        run_spacing=12,
+                        wrap=True,
+                        controls=[
+                            _summary_tile(
+                                self._actor_label_title(question),
+                                scenario.actor_label,
+                                self._actor_label_icon(question),
+                                190,
+                            ),
+                            _summary_tile("アウト", scenario.outs_label, ft.Icons.OUTBOUND, 128),
+                            _summary_tile("ランナー", scenario.runners.label, ft.Icons.DIRECTIONS_RUN, 180),
+                            _summary_tile(
+                                "ボールのうごき",
+                                kids_text(scenario.batted_ball),
+                                ft.Icons.SPORTS_BASEBALL,
+                                280,
+                            ),
+                            _summary_tile("メモ", kids_text(scenario.fielding_note), ft.Icons.INFO, 340),
+                        ],
+                    ),
+                ],
+            ),
+        )
+
+    def render_field(self, question: QuizQuestion) -> ft.Control:
+        scenario = question.scenario
+        return ft.Container(
+            bgcolor=theme.SURFACE,
+            border=ft.Border.all(1, theme.BORDER),
+            border_radius=theme.CARD_RADIUS,
+            padding=ft.Padding(14, 14, 14, 14),
+            content=ft.Column(
+                spacing=10,
+                controls=[
+                    ft.Row(
+                        spacing=8,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            ft.Icon(ft.Icons.SPORTS_BASEBALL, size=20, color=theme.PRIMARY),
+                            ft.Text("ずでみる", size=16, weight=ft.FontWeight.BOLD, color=theme.TEXT),
                         ],
                     ),
                     self._field.render(
                         scenario.runners,
                         scenario.position,
                         scenario.runner_role,
-                    ),
-                    ft.Column(
-                        spacing=10,
-                        controls=[
-                            _info_line(
-                                "まもる場所" if scenario.position is not None else "走る人",
-                                scenario.actor_label,
-                                ft.Icons.SHIELD if scenario.position is not None else ft.Icons.DIRECTIONS_RUN,
-                            ),
-                            _info_line("ランナー", scenario.runners.label, ft.Icons.DIRECTIONS_RUN),
-                            _info_line("ボールの動き", kids_text(scenario.batted_ball), ft.Icons.SPORTS_BASEBALL),
-                            _info_line("メモ", kids_text(scenario.fielding_note), ft.Icons.INFO),
-                        ],
+                        scenario.rule_topic,
                     ),
                 ],
             ),
         )
+
+    def _actor_label_title(self, question: QuizQuestion) -> str:
+        if question.scenario.position is not None:
+            return "まもる場所"
+        if question.scenario.runner_role is not None:
+            return "走る人"
+        return "きほんルール"
+
+    def _actor_label_icon(self, question: QuizQuestion) -> ft.Icons:
+        if question.scenario.position is not None:
+            return ft.Icons.SHIELD
+        if question.scenario.runner_role is not None:
+            return ft.Icons.DIRECTIONS_RUN
+        return ft.Icons.MENU_BOOK
 
 
 class FieldDiagram:
@@ -243,6 +327,7 @@ class FieldDiagram:
         runners: RunnerState,
         position: DefensivePosition | None,
         runner_role: RunnerRole | None,
+        rule_topic: RuleTopic | None,
     ) -> ft.Control:
         return ft.Container(
             height=345,
@@ -266,21 +351,21 @@ class FieldDiagram:
                     self._base(
                         "二るい",
                         runners.second,
-                        self._active_runner_base(runner_role, RunnerRole.SECOND_RUNNER),
+                        self._active_runner_base(runner_role, rule_topic, RunnerRole.SECOND_RUNNER),
                         134,
                         62,
                     ),
                     self._base(
                         "三るい",
                         runners.third,
-                        self._active_runner_base(runner_role, RunnerRole.THIRD_RUNNER),
+                        self._active_runner_base(runner_role, rule_topic, RunnerRole.THIRD_RUNNER),
                         48,
                         152,
                     ),
                     self._base(
                         "一るい",
                         runners.first,
-                        self._active_runner_base(runner_role, RunnerRole.FIRST_RUNNER),
+                        self._active_runner_base(runner_role, rule_topic, RunnerRole.FIRST_RUNNER),
                         220,
                         152,
                     ),
@@ -331,7 +416,13 @@ class FieldDiagram:
             content=ft.Text(text, size=12, color=theme.TEXT_MUTED),
         )
 
-    def _active_runner_base(self, runner_role: RunnerRole | None, role: RunnerRole) -> bool:
+    def _active_runner_base(
+        self,
+        runner_role: RunnerRole | None,
+        rule_topic: RuleTopic | None,
+        role: RunnerRole,
+    ) -> bool:
+        _ = rule_topic
         return runner_role == role
 
     def _fielders(self, active_position: DefensivePosition | None) -> list[ft.Control]:
@@ -380,7 +471,7 @@ class QuestionPanel:
     ) -> ft.Control:
         answered = selected_option_id is not None
         controls: list[ft.Control] = [
-            ft.Text(kids_text(question.prompt), size=22, weight=ft.FontWeight.BOLD, color=theme.TEXT),
+            ft.Text(kids_text(question.prompt), size=20, weight=ft.FontWeight.BOLD, color=theme.TEXT),
             ft.Text(
                 kids_text(self._helper_text(question)),
                 size=13,
@@ -408,6 +499,8 @@ class QuestionPanel:
     def _helper_text(self, question: QuizQuestion) -> str:
         if question.scenario.runner_role is not None:
             return "えらんだ走る人として、つぎにすることをこたえてください。"
+        if question.scenario.rule_topic is not None:
+            return "ルールとして正しいものをえらんでください。"
         return "えらんだ場所の人として、いちばん先にすることをこたえてください。"
 
 
@@ -621,4 +714,34 @@ def _info_line(label: str, value: str, icon: ft.Icons) -> ft.Control:
                 ],
             ),
         ],
+    )
+
+
+def _summary_tile(label: str, value: str, icon: ft.Icons, width: int) -> ft.Control:
+    return ft.Container(
+        width=width,
+        bgcolor=theme.SURFACE,
+        border=ft.Border.all(1, theme.BORDER),
+        border_radius=theme.CARD_RADIUS,
+        padding=ft.Padding(12, 10, 12, 10),
+        content=ft.Row(
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.START,
+            controls=[
+                ft.Icon(icon, size=18, color=theme.PRIMARY),
+                ft.Column(
+                    spacing=2,
+                    expand=True,
+                    controls=[
+                        ft.Text(label, size=12, color=theme.TEXT_MUTED),
+                        ft.Text(
+                            value,
+                            size=15,
+                            color=theme.TEXT,
+                            weight=ft.FontWeight.W_600,
+                        ),
+                    ],
+                ),
+            ],
+        ),
     )
