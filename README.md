@@ -36,10 +36,10 @@ python -m unittest discover -s tests
 https://naan-cyber.github.io/SoftballQuiz_JP/
 ```
 
-ローカルで Pages 用ビルドだけ確認する場合:
+ローカルで Pages 用の静的サイト生成だけ確認する場合:
 
 ```bash
-uv run flet build web --yes --verbose --base-url SoftballQuiz_JP --route-url-strategy hash
+uv run flet publish main.py --distpath build/web --base-url SoftballQuiz_JP --route-url-strategy hash
 ```
 
 ## 構成

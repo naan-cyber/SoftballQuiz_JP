@@ -20,8 +20,8 @@ env:
 
 jobs:
   build:
-    name: Build web app
-    runs-on: macos-latest
+    name: Publish web app
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -30,10 +30,10 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Build Flet web app
+      - name: Publish Flet web app
         shell: bash
         run: |
-          uv run flet build web --yes --verbose --base-url "${GITHUB_REPOSITORY#*/}" --route-url-strategy hash
+          uv run flet publish main.py --distpath build/web --base-url "${GITHUB_REPOSITORY#*/}" --route-url-strategy hash
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
