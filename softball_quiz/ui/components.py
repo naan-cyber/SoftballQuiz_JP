@@ -268,11 +268,11 @@ class ScenarioPanel:
                             _summary_tile("ランナー", scenario.runners.label, ft.Icons.DIRECTIONS_RUN, 180),
                             _summary_tile(
                                 "ボールのうごき",
-                                kids_text(scenario.batted_ball),
+                                scenario.batted_ball,
                                 ft.Icons.SPORTS_BASEBALL,
                                 280,
                             ),
-                            _summary_tile("メモ", kids_text(scenario.fielding_note), ft.Icons.INFO, 340),
+                            _summary_tile("メモ", scenario.fielding_note, ft.Icons.INFO, 340),
                         ],
                     ),
                 ],
