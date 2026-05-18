@@ -25,9 +25,9 @@ class DefensivePosition(str, Enum):
         return {
             DefensivePosition.PITCHER: "ピッチャー",
             DefensivePosition.CATCHER: "キャッチャー",
-            DefensivePosition.FIRST_BASE: "一るい",
-            DefensivePosition.SECOND_BASE: "二るい",
-            DefensivePosition.THIRD_BASE: "三るい",
+            DefensivePosition.FIRST_BASE: "1るい",
+            DefensivePosition.SECOND_BASE: "2るい",
+            DefensivePosition.THIRD_BASE: "3るい",
             DefensivePosition.SHORTSTOP: "ショート",
             DefensivePosition.LEFT_FIELD: "レフト",
             DefensivePosition.CENTER_FIELD: "センター",
@@ -58,9 +58,9 @@ class RunnerRole(str, Enum):
     def label(self) -> str:
         return {
             RunnerRole.BATTER_RUNNER: "バッターランナー",
-            RunnerRole.FIRST_RUNNER: "一るいランナー",
-            RunnerRole.SECOND_RUNNER: "二るいランナー",
-            RunnerRole.THIRD_RUNNER: "三るいランナー",
+            RunnerRole.FIRST_RUNNER: "1るいランナー",
+            RunnerRole.SECOND_RUNNER: "2るいランナー",
+            RunnerRole.THIRD_RUNNER: "3るいランナー",
         }[self]
 
 
@@ -109,11 +109,11 @@ class RunnerState:
     def occupied_bases(self) -> tuple[str, ...]:
         bases: list[str] = []
         if self.first:
-            bases.append("一るい")
+            bases.append("1るい")
         if self.second:
-            bases.append("二るい")
+            bases.append("2るい")
         if self.third:
-            bases.append("三るい")
+            bases.append("3るい")
         return tuple(bases)
 
     @property
