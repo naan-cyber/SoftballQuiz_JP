@@ -22,6 +22,26 @@ Flet を起動せず、クイズロジックと問題データだけを確認し
 python -m unittest discover -s tests
 ```
 
+## GitHub Pages で公開
+
+このリポジトリは GitHub Actions で Flet の静的 Web アプリをビルドし、GitHub Pages にデプロイできます。
+
+1. GitHub の `Settings` → `Pages` で、`Build and deployment` の `Source` を `GitHub Actions` にします。
+2. `main` ブランチへ push します。
+3. `Actions` タブで `Build and Deploy Flet Web App` の完了を確認します。
+
+公開 URL は次の形式です。
+
+```text
+https://naan-cyber.github.io/SoftballQuiz_JP/
+```
+
+ローカルで Pages 用ビルドだけ確認する場合:
+
+```bash
+uv run flet build web --yes --verbose --base-url SoftballQuiz_JP --route-url-strategy hash
+```
+
 ## 構成
 
 - `main.py`: Flet 起動用の薄い入口
