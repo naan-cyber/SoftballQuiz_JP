@@ -366,7 +366,6 @@ class FieldDiagram:
                         opacity=0.35,
                         border_radius=4,
                     ),
-                    self._label("がいや", 136, 8),
                     self._base(
                         "2るい",
                         runners.second,
@@ -393,7 +392,7 @@ class FieldDiagram:
                         False,
                         runner_role == RunnerRole.BATTER_RUNNER,
                         134,
-                        286,
+                        236,
                     ),
                     *self._fielders(position),
                 ],
@@ -426,13 +425,6 @@ class FieldDiagram:
                     ft.Text(label, size=11, color=theme.TEXT),
                 ],
             ),
-        )
-
-    def _label(self, text: str, left: int, top: int) -> ft.Control:
-        return ft.Container(
-            left=left,
-            top=top,
-            content=ft.Text(text, size=12, color=theme.TEXT_MUTED),
         )
 
     def _active_runner_base(
