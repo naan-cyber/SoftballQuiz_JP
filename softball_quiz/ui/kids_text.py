@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 
 GRADE_3_AND_UP_READINGS: tuple[tuple[str, str], ...] = (
     ("インフィールドフライが宣告", "インフィールドフライが宣告（せんこく）"),
@@ -192,6 +194,7 @@ def _dedupe_readings(text: str) -> str:
     cleanups = (
         ("フォースアウト（ふむだけのアウト）（ふむだけのアウト）", "フォースアウト（ふむだけのアウト）"),
         ("タッチアップ（とったあとに走ること）（とったあとに走ること）", "タッチアップ（とったあとに走ること）"),
+        ("バッターボックス（打つ（うつ）場所（ばしょ））（打つ（うつ）場所（ばしょ））", "バッターボックス（打つ（うつ）場所（ばしょ））"),
         ("満るい（まんるい）（まんるい）", "満るい（まんるい）"),
         ("場所（ばしょ）（ばしょ）", "場所（ばしょ）"),
         ("自分（じぶん）（じぶん）", "自分（じぶん）"),
@@ -201,6 +204,10 @@ def _dedupe_readings(text: str) -> str:
         ("始まり（はじまり）ます（はじまります）", "始まります（はじまります）"),
     )
     readable = text
-    for source, target in cleanups:
-        readable = readable.replace(source, target)
-    return readable
+    while True:
+        previous = readable
+        for source, target in cleanups:
+            readable = readable.replace(source, target)
+        readable = re.sub(r"（([^（）]+)）(?:（\1）)+", r"（\1）", readable)
+        if readable == previous:
+            return readable
