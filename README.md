@@ -39,7 +39,20 @@ https://naan-cyber.github.io/SoftballQuiz_JP/
 ローカルで Pages 用の静的サイト生成だけ確認する場合:
 
 ```bash
-uv run flet publish main.py --distpath build/web --base-url SoftballQuiz_JP --route-url-strategy hash
+rm -rf .pages-app build/web
+mkdir -p .pages-app
+cp main.py .pages-app/
+cp -R softball_quiz .pages-app/
+find .pages-app -type d -name __pycache__ -prune -exec rm -rf {} +
+FLET_VERSION="$(uv run python -c 'import flet; print(flet.__version__)')"
+cat > .pages-app/pyproject.toml <<EOF
+[project]
+name = "softball-next-play-quiz"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["flet==${FLET_VERSION}"]
+EOF
+uv run flet publish .pages-app/main.py --distpath "$PWD/build/web" --base-url SoftballQuiz_JP --route-url-strategy hash
 ```
 
 ## 構成

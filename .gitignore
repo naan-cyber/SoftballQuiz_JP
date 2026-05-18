@@ -1,4 +1,5 @@
 build/
+.pages-app/
 .flet/
 .venv/
 __pycache__/
