@@ -267,9 +267,10 @@ wheels = [
 ]
 
 [package.optional-dependencies]
-all = [
+cli = [
     { name = "flet-cli" },
-    { name = "flet-desktop" },
+]
+web = [
     { name = "flet-web" },
 ]
 
@@ -290,18 +291,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a5/21/2b7952b03dc4d847aea871577d03ae4f6d93fc64666b92a811b70338a191/flet_cli-0.85.1.tar.gz", hash = "sha256:943e03b87826cb01333a3e5d2abcacfc23226a6bbeed10301b1703e10694231b", size = 59604, upload-time = "2026-05-13T16:36:00.617Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ea/5e/ce875257f656aac50cf90220c137b1b2ffc7c76cf8686603e0ecec8a7aba/flet_cli-0.85.1-py3-none-any.whl", hash = "sha256:bc32c5073010cfb033733ef94bd906394f830fd9864a36e0e3474ff78af9e627", size = 71713, upload-time = "2026-05-13T16:35:59.34Z" },
-]
-
-[[package]]
-name = "flet-desktop"
-version = "0.85.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "flet" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/31/dcbd639a2bf0d799cbe10d599e02d823f3a00c10889a1ef174427cd365d2/flet_desktop-0.85.1.tar.gz", hash = "sha256:9f26e8ef57a4ba3ed8c232f75f19b0cd86293758c47ea202d3a3a4bc3bf445f3", size = 6099, upload-time = "2026-05-13T16:36:04.365Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/32/3b/6992ebb8ceb272f5b925972c09ce121e654de7cda5d99a01e03f5d58c385/flet_desktop-0.85.1-py3-none-any.whl", hash = "sha256:ae57030a5573ce0852f8cb980955044a8fe20d11ce2d2763a6e45858eb935b2e", size = 6176, upload-time = "2026-05-13T16:36:03.238Z" },
 ]
 
 [[package]]
@@ -907,11 +896,11 @@ name = "softball-next-play-quiz"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "flet", extra = ["all"] },
+    { name = "flet", extra = ["cli", "web"] },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "flet", extras = ["all"], specifier = ">=0.28.0" }]
+requires-dist = [{ name = "flet", extras = ["cli", "web"], specifier = ">=0.28.0" }]
 
 [[package]]
 name = "starlette"
