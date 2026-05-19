@@ -840,7 +840,7 @@ class FieldDiagram:
         if kind in ("フライ", "ライナー"):
             return self._arc_path_controls(start, end, color, high=kind == "フライ", dashed=not solid)
         if kind in ("ゴロ", "バント", "ヒット", "ファウル", "打球"):
-            return self._zigzag_path_controls(start, end, color, dashed=not solid)
+            return self._grounder_path_controls(start, end, color, dashed=not solid)
         return self._straight_path_controls(start, end, color, dashed=not solid)
 
     def _foul_line_controls(self) -> list[ft.Control]:
@@ -901,7 +901,7 @@ class FieldDiagram:
         controls.append(self._arrow_control(end, angle, color))
         return controls
 
-    def _zigzag_path_controls(
+    def _grounder_path_controls(
         self,
         start: tuple[int, int],
         end: tuple[int, int],
@@ -909,9 +909,9 @@ class FieldDiagram:
         *,
         dashed: bool,
     ) -> list[ft.Control]:
-        point_count = 31 if dashed else 21
+        point_count = 41 if dashed else 33
         points = [
-            self._zigzag_point(start, end, index / (point_count - 1), point_count - 1)
+            self._grounder_bounce_point(start, end, index / (point_count - 1))
             for index in range(point_count)
         ]
         controls = self._polyline_controls(points, color, height=4, opacity=0.78, dashed=dashed)
@@ -1028,18 +1028,17 @@ class FieldDiagram:
             inv * inv * start[1] + 2 * inv * t * control[1] + t * t * end[1],
         )
 
-    def _zigzag_point(
+    def _grounder_bounce_point(
         self,
         start: tuple[int, int],
         end: tuple[int, int],
         t: float,
-        steps: int,
     ) -> tuple[float, float]:
         dx = end[0] - start[0]
         dy = end[1] - start[1]
         length = max(1, math.hypot(dx, dy))
         normal = (-dy / length, dx / length)
-        bounce = 0 if t in (0, 1) else (5 if int(t * steps) % 2 == 0 else -5)
+        bounce = math.sin(t * math.pi * 8) * 4
         return (
             start[0] + dx * t + normal[0] * bounce,
             start[1] + dy * t + normal[1] * bounce,

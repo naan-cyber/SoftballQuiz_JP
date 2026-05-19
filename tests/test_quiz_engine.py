@@ -206,6 +206,21 @@ class QuestionDataTest(unittest.TestCase):
         self.assertTrue(diagram._is_caught_state("とられた"))
         self.assertFalse(diagram._is_caught_state("まだ空中"))
 
+    def test_grounder_path_uses_small_connected_bounces(self) -> None:
+        diagram = FieldDiagram()
+        start = (160, 255)
+        end = (212, 174)
+
+        points = [
+            diagram._grounder_bounce_point(start, end, index / 32)
+            for index in range(33)
+        ]
+
+        self.assertEqual(start, points[0])
+        self.assertAlmostEqual(end[0], points[-1][0])
+        self.assertAlmostEqual(end[1], points[-1][1])
+        self.assertTrue(any(0 < abs(point[0] - diagram._line_point(start, end, index / 32)[0]) < 5 for index, point in enumerate(points[1:-1], start=1)))
+
     def _is_inside_fair_lines(self, point: tuple[int, int] | None) -> bool:
         if point is None:
             return False
