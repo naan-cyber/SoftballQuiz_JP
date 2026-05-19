@@ -118,6 +118,15 @@ class QuestionDataTest(unittest.TestCase):
         self.assertEqual((204, 212), point)
         self.assertTrue(self._is_inside_fair_lines(point))
 
+    def test_foul_line_fair_question_stops_on_first_base_line(self) -> None:
+        diagram = FieldDiagram()
+        question = next(question for question in QUESTIONS if question.id == "rule-foul-line-is-fair")
+
+        point = diagram._location_point(question.scenario.batted_ball)
+
+        self.assertEqual((204, 212), point)
+        self.assertTrue(self._is_inside_fair_lines(point))
+
     def test_outfield_foul_fly_lands_outside_fair_lines(self) -> None:
         diagram = FieldDiagram()
         point = diagram._location_point("外野フライがファウルラインの外に落ちた")
