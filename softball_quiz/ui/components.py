@@ -867,7 +867,7 @@ class FieldDiagram:
         mid_x = (start[0] + end[0]) / 2
         mid_y = (start[1] + end[1]) / 2
         if dashed:
-            points = [self._line_point(start, end, index / 12) for index in range(13)]
+            points = [self._line_point(start, end, index / 28) for index in range(29)]
             return [
                 *self._polyline_controls(points, color, height=4, opacity=0.78, dashed=True),
                 self._arrow_control(end, angle, color),
@@ -891,7 +891,11 @@ class FieldDiagram:
             (start[0] + end[0]) / 2,
             max(14, min(start[1], end[1]) - lift),
         )
-        points = [self._quadratic_point(start, control, end, index / 14) for index in range(15)]
+        point_count = 33 if dashed else 25
+        points = [
+            self._quadratic_point(start, control, end, index / (point_count - 1))
+            for index in range(point_count)
+        ]
         controls = self._polyline_controls(points, color, height=4, opacity=0.78, dashed=dashed)
         angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
         controls.append(self._arrow_control(end, angle, color))
@@ -905,7 +909,11 @@ class FieldDiagram:
         *,
         dashed: bool,
     ) -> list[ft.Control]:
-        points = [self._zigzag_point(start, end, index / 14) for index in range(15)]
+        point_count = 31 if dashed else 21
+        points = [
+            self._zigzag_point(start, end, index / (point_count - 1), point_count - 1)
+            for index in range(point_count)
+        ]
         controls = self._polyline_controls(points, color, height=4, opacity=0.78, dashed=dashed)
         angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
         controls.append(self._arrow_control(end, angle, color))
@@ -947,7 +955,9 @@ class FieldDiagram:
                 continue
             dx = end[0] - start[0]
             dy = end[1] - start[1]
-            length = max(8, math.hypot(dx, dy))
+            length = max(5 if dashed else 8, math.hypot(dx, dy))
+            if not dashed:
+                length += 2
             angle = math.atan2(dy, dx)
             controls.append(
                 self._segment_control(
@@ -1023,12 +1033,13 @@ class FieldDiagram:
         start: tuple[int, int],
         end: tuple[int, int],
         t: float,
+        steps: int,
     ) -> tuple[float, float]:
         dx = end[0] - start[0]
         dy = end[1] - start[1]
         length = max(1, math.hypot(dx, dy))
         normal = (-dy / length, dx / length)
-        bounce = 0 if t in (0, 1) else (5 if int(t * 14) % 2 == 0 else -5)
+        bounce = 0 if t in (0, 1) else (5 if int(t * steps) % 2 == 0 else -5)
         return (
             start[0] + dx * t + normal[0] * bounce,
             start[1] + dy * t + normal[1] * bounce,

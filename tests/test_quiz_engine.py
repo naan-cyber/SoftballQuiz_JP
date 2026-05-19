@@ -201,7 +201,8 @@ class QuestionDataTest(unittest.TestCase):
         uncaught = diagram._path_controls(start, end, FieldDiagram.FLY_COLOR, "フライ", False, solid=False)
         caught = diagram._path_controls(start, end, FieldDiagram.FLY_COLOR, "フライ", False, solid=True)
 
-        self.assertLess(len(uncaught), len(caught))
+        self.assertGreater(len(uncaught), 10)
+        self.assertGreater(len(caught), len(uncaught))
         self.assertTrue(diagram._is_caught_state("とられた"))
         self.assertFalse(diagram._is_caught_state("まだ空中"))
 
