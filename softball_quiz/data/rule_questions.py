@@ -326,8 +326,8 @@ RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
         rule_topic=RuleTopic.RUNNING_RULES,
         outs=0,
         runners=RunnerState(),
-        ball="バッターが長打を打った",
-        note="2るいまで行けそう。",
+        ball="自分がバッターで、長打を打った",
+        note="バッターランナーとして、2るいまで行けそう。",
         prompt="どう走る？",
         options=(
             ("1るいをふんでから2るいへ行く", True, "るいは順番にふむ必要があります。"),
