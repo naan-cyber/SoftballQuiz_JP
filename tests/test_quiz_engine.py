@@ -185,6 +185,26 @@ class QuestionDataTest(unittest.TestCase):
             diagram._possession_point("ピッチャーのボールをとったあと、1るいランナーが2るいへ走った", None),
         )
 
+    def test_ball_path_colors_are_consistent_by_kind(self) -> None:
+        diagram = FieldDiagram()
+
+        self.assertEqual(("フライ", "まだ空中", FieldDiagram.FLY_COLOR), diagram._ball_style("フライが上がった", is_throw=False))
+        self.assertEqual(("ライナー", "まだ空中", FieldDiagram.LINER_COLOR), diagram._ball_style("ライナーが飛んだ", is_throw=False))
+        self.assertEqual(("ゴロ", "地面", FieldDiagram.GROUND_COLOR), diagram._ball_style("ゴロが転がった", is_throw=False))
+        self.assertEqual(("返球", "ボールが向かう", FieldDiagram.THROW_COLOR), diagram._ball_style("返球", is_throw=True))
+
+    def test_uncaught_paths_are_dashed_and_caught_paths_are_solid(self) -> None:
+        diagram = FieldDiagram()
+        start = (160, 255)
+        end = (160, 58)
+
+        uncaught = diagram._path_controls(start, end, FieldDiagram.FLY_COLOR, "フライ", False, solid=False)
+        caught = diagram._path_controls(start, end, FieldDiagram.FLY_COLOR, "フライ", False, solid=True)
+
+        self.assertLess(len(uncaught), len(caught))
+        self.assertTrue(diagram._is_caught_state("とられた"))
+        self.assertFalse(diagram._is_caught_state("まだ空中"))
+
     def _is_inside_fair_lines(self, point: tuple[int, int] | None) -> bool:
         if point is None:
             return False

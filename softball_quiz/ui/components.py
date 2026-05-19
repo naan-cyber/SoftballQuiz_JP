@@ -283,11 +283,6 @@ class ScenarioPanel:
 
     def render_field(self, question: QuizQuestion) -> ft.Control:
         scenario = question.scenario
-        ball_summary = self._field.ball_summary(
-            scenario.batted_ball,
-            scenario.fielding_note,
-            scenario.position,
-        )
         controls: list[ft.Control] = [
             ft.Row(
                 spacing=8,
@@ -298,8 +293,6 @@ class ScenarioPanel:
                 ],
             )
         ]
-        if ball_summary is not None:
-            controls.append(_field_note_banner(ball_summary))
         controls.append(
             self._field.render(
                 scenario.runners,
@@ -356,6 +349,11 @@ class ScenarioPanel:
 
 
 class FieldDiagram:
+    FLY_COLOR = "#D64545"
+    LINER_COLOR = "#7B3FB2"
+    GROUND_COLOR = "#2F80ED"
+    THROW_COLOR = "#E07A1F"
+
     def ball_summary(
         self,
         batted_ball: str,
@@ -532,7 +530,14 @@ class FieldDiagram:
         end = self._location_point(batted_ball) or self._location_point(text) or (160, 120)
 
         return [
-            *self._path_controls(start, end, color, kind, False),
+            *self._path_controls(
+                start,
+                end,
+                color,
+                kind,
+                False,
+                solid=self._is_caught_state(state),
+            ),
             self._ball_marker(end[0] - 10, end[1] - 10, color),
             self._ball_label(kind, state, 12, 12, color),
         ]
@@ -596,29 +601,29 @@ class FieldDiagram:
 
     def _ball_style(self, text: str, *, is_throw: bool) -> tuple[str, str, str]:
         if is_throw:
-            return "返球", "ボールが向かう", theme.ERROR
+            return "返球", "ボールが向かう", self.THROW_COLOR
 
         if "フライ" in text:
             kind = "フライ"
-            color = "#2F80ED"
+            color = self.FLY_COLOR
         elif "ライナー" in text:
             kind = "ライナー"
-            color = "#7B3FB2"
+            color = self.LINER_COLOR
         elif "バント" in text:
             kind = "バント"
-            color = theme.WARNING
+            color = self.GROUND_COLOR
         elif "ゴロ" in text:
             kind = "ゴロ"
-            color = theme.PRIMARY_DARK
+            color = self.GROUND_COLOR
         elif "ヒット" in text:
             kind = "ヒット"
-            color = theme.PRIMARY_DARK
+            color = self.GROUND_COLOR
         elif "ファウル" in text:
             kind = "ファウル"
-            color = theme.WARNING
+            color = self.GROUND_COLOR
         elif "打球" in text:
             kind = "打球"
-            color = theme.PRIMARY_DARK
+            color = self.GROUND_COLOR
         else:
             kind = "ボール"
             color = theme.PRIMARY
@@ -659,6 +664,9 @@ class FieldDiagram:
             state = "位置"
 
         return kind, state, color
+
+    def _is_caught_state(self, state: str) -> bool:
+        return state in ("とられた", "守る人が持つ", "キャッチャーが持つ")
 
     def _throw_points(
         self,
@@ -824,14 +832,16 @@ class FieldDiagram:
         color: str,
         kind: str,
         is_throw: bool,
+        *,
+        solid: bool,
     ) -> list[ft.Control]:
         if is_throw:
-            return self._straight_path_controls(start, end, color)
+            return self._straight_path_controls(start, end, color, dashed=not solid)
         if kind in ("フライ", "ライナー"):
-            return self._arc_path_controls(start, end, color, high=kind == "フライ")
-        if kind in ("ゴロ", "バント", "ヒット"):
-            return self._rolling_path_controls(start, end, color)
-        return self._straight_path_controls(start, end, color)
+            return self._arc_path_controls(start, end, color, high=kind == "フライ", dashed=not solid)
+        if kind in ("ゴロ", "バント", "ヒット", "ファウル", "打球"):
+            return self._zigzag_path_controls(start, end, color, dashed=not solid)
+        return self._straight_path_controls(start, end, color, dashed=not solid)
 
     def _foul_line_controls(self) -> list[ft.Control]:
         home = (160, 255)
@@ -847,6 +857,8 @@ class FieldDiagram:
         start: tuple[int, int],
         end: tuple[int, int],
         color: str,
+        *,
+        dashed: bool,
     ) -> list[ft.Control]:
         dx = end[0] - start[0]
         dy = end[1] - start[1]
@@ -854,8 +866,14 @@ class FieldDiagram:
         angle = math.atan2(dy, dx)
         mid_x = (start[0] + end[0]) / 2
         mid_y = (start[1] + end[1]) / 2
+        if dashed:
+            points = [self._line_point(start, end, index / 12) for index in range(13)]
+            return [
+                *self._polyline_controls(points, color, height=4, opacity=0.78, dashed=True),
+                self._arrow_control(end, angle, color),
+            ]
         return [
-            self._segment_control(mid_x, mid_y, length, angle, color, height=4, opacity=0.75),
+            self._segment_control(mid_x, mid_y, length, angle, color, height=4, opacity=0.78),
             self._arrow_control(end, angle, color),
         ]
 
@@ -866,6 +884,7 @@ class FieldDiagram:
         color: str,
         *,
         high: bool,
+        dashed: bool,
     ) -> list[ft.Control]:
         lift = 64 if high else 36
         control = (
@@ -873,19 +892,21 @@ class FieldDiagram:
             max(14, min(start[1], end[1]) - lift),
         )
         points = [self._quadratic_point(start, control, end, index / 14) for index in range(15)]
-        controls = self._polyline_controls(points, color, height=4, opacity=0.78)
+        controls = self._polyline_controls(points, color, height=4, opacity=0.78, dashed=dashed)
         angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
         controls.append(self._arrow_control(end, angle, color))
         return controls
 
-    def _rolling_path_controls(
+    def _zigzag_path_controls(
         self,
         start: tuple[int, int],
         end: tuple[int, int],
         color: str,
+        *,
+        dashed: bool,
     ) -> list[ft.Control]:
-        points = [self._wave_point(start, end, index / 18) for index in range(19)]
-        controls = self._polyline_controls(points, color, height=3, opacity=0.7, every_other=True)
+        points = [self._zigzag_point(start, end, index / 14) for index in range(15)]
+        controls = self._polyline_controls(points, color, height=4, opacity=0.78, dashed=dashed)
         angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
         controls.append(self._arrow_control(end, angle, color))
         return controls
@@ -918,11 +939,11 @@ class FieldDiagram:
         *,
         height: int,
         opacity: float,
-        every_other: bool = False,
+        dashed: bool = False,
     ) -> list[ft.Control]:
         controls: list[ft.Control] = []
         for index, (start, end) in enumerate(zip(points, points[1:])):
-            if every_other and index % 2 == 1:
+            if dashed and index % 2 == 1:
                 continue
             dx = end[0] - start[0]
             dy = end[1] - start[1]
@@ -940,6 +961,17 @@ class FieldDiagram:
                 )
             )
         return controls
+
+    def _line_point(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        t: float,
+    ) -> tuple[float, float]:
+        return (
+            start[0] + (end[0] - start[0]) * t,
+            start[1] + (end[1] - start[1]) * t,
+        )
 
     def _segment_control(
         self,
@@ -986,7 +1018,7 @@ class FieldDiagram:
             inv * inv * start[1] + 2 * inv * t * control[1] + t * t * end[1],
         )
 
-    def _wave_point(
+    def _zigzag_point(
         self,
         start: tuple[int, int],
         end: tuple[int, int],
@@ -996,7 +1028,7 @@ class FieldDiagram:
         dy = end[1] - start[1]
         length = max(1, math.hypot(dx, dy))
         normal = (-dy / length, dx / length)
-        bounce = math.sin(t * math.pi * 8) * 5
+        bounce = 0 if t in (0, 1) else (5 if int(t * 14) % 2 == 0 else -5)
         return (
             start[0] + dx * t + normal[0] * bounce,
             start[1] + dy * t + normal[1] * bounce,
