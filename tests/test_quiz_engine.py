@@ -35,7 +35,7 @@ class QuestionDataTest(unittest.TestCase):
     def test_each_position_has_questions(self) -> None:
         counts = question_counts_by_position()
         for position in POSITION_ORDER:
-            self.assertGreaterEqual(counts[position], 6, msg=position.value)
+            self.assertGreaterEqual(counts[position], 11, msg=position.value)
 
     def test_each_runner_role_has_questions(self) -> None:
         counts = question_counts_by_runner_role()

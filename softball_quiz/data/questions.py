@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter
 
 from softball_quiz.data.battery_questions import CATCHER_QUESTIONS, PITCHER_QUESTIONS
+from softball_quiz.data.defense_extra_questions import DEFENSE_EXTRA_QUESTIONS
 from softball_quiz.data.infield_questions import INFIELD_QUESTIONS
 from softball_quiz.data.outfield_questions import OUTFIELD_QUESTIONS
 from softball_quiz.data.rule_questions import RULE_QUESTIONS
@@ -23,6 +24,7 @@ QUESTIONS: tuple[QuizQuestion, ...] = (
     *CATCHER_QUESTIONS,
     *INFIELD_QUESTIONS,
     *OUTFIELD_QUESTIONS,
+    *DEFENSE_EXTRA_QUESTIONS,
     *RUNNER_QUESTIONS,
     *RULE_QUESTIONS,
 )
