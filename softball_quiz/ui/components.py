@@ -345,6 +345,8 @@ class ScenarioPanel:
             return "これは走るルールです。ランナーやバッターがどうするかをえらびます。"
         if scenario.rule_topic == RuleTopic.GAME_FLOW:
             return "これはしあいの流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
+        if scenario.rule_topic == RuleTopic.BASEBALL_DIFFERENCES:
+            return "これは野球とソフトボールのちがいです。ソフトボールで正しいきまりをえらびます。"
         return "これはきほんルールです。場面を見て、正しい決まりをえらびます。"
 
 
@@ -576,6 +578,7 @@ class FieldDiagram:
             "ベースから少し離れた",
             "3つ目のアウト",
             "一回の表",
+            "野球とソフトボールをくらべる",
         )
         if any(word in text for word in no_ball_words):
             return True

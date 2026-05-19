@@ -434,10 +434,121 @@ GAME_FLOW_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
 )
 
 
+BASEBALL_DIFFERENCE_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
+    make_question(
+        question_id="rule-baseball-diff-pitching-form",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="ピッチャーの投げ方のちがい。",
+        prompt="ソフトボールのピッチャーで正しいのは？",
+        options=(
+            ("体の横を通して、下から投げるきまりがある", True, "ソフトボールの投げ方は、野球の上から投げる形とはちがいます。"),
+            ("野球と同じように、上から投げる", False, "ソフトボールでは、投げ方にソフトボールのきまりがあります。"),
+            ("どんな投げ方でもよい", False, "ピッチャーの投げ方にはきまりがあります。"),
+        ),
+        point="ソフトボールのピッチャーは、体の横を通して下から投げる形がきほんです。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-no-lead",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="野球とソフトボールをくらべる",
+        note="ランナーのスタートのちがい。",
+        prompt="ソフトボールのランナーで正しいのは？",
+        options=(
+            ("ピッチャーの手からボールが離れるまで、るいについて待つ", True, "ソフトボールでは、投球前の大きなリードはできません。"),
+            ("野球と同じように、投げる前から大きくリードしてよい", False, "ソフトボールでは、投げる前にるいを離れないことが大切です。"),
+            ("いつでも好きなタイミングで走り出してよい", False, "走り出すタイミングにはきまりがあります。"),
+        ),
+        point="ソフトボールでは、投球前に勝手にるいを離れません。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-base-distance",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="るいとるいのきょりのちがい。",
+        prompt="ソフトボールのグラウンドで正しいのは？",
+        options=(
+            ("るいとるいの間は、野球より短い", True, "ソフトボールはきょりが短いので、すばやい動きが大切です。"),
+            ("るいとるいの間は、野球より長い", False, "ソフトボールのるい間は、野球より短いです。"),
+            ("るいのきょりは、野球と必ず同じ", False, "グラウンドの大きさにも、野球とのちがいがあります。"),
+        ),
+        point="ソフトボールは、野球より小さめのグラウンドで行います。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-no-mound",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="ピッチャーが立つ場所のちがい。",
+        prompt="ソフトボールのピッチャーの足もとは？",
+        options=(
+            ("高いマウンドではなく、平らな場所にプレートがある", True, "ソフトボールのピッチャーは、平らな場所から投げます。"),
+            ("野球と同じ高いマウンドがある", False, "ソフトボールでは、野球のような高いマウンドは使いません。"),
+            ("本るいの上から投げる", False, "ピッチャーは本るいではなく、ピッチャーの場所から投げます。"),
+        ),
+        point="ソフトボールでは、マウンドではなく平らな場所から投げます。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-double-base",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="1るいのベースのちがい。",
+        prompt="ソフトボールの1るいで使うことがあるのは？",
+        options=(
+            ("白とオレンジのダブルベース", True, "ぶつかるあぶなさをへらすために、1るいで使います。"),
+            ("本るいを2つならべたベース", False, "本るいではなく、1るいの安全のためのベースです。"),
+            ("ベースを使わないルール", False, "ソフトボールでもベースを使います。"),
+        ),
+        point="ダブルベースは、1るいでぶつかることをへらすためのルールです。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-seven-innings",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="試合の回数のちがい。",
+        prompt="ソフトボールの試合は、きほん何回まで？",
+        options=(
+            ("7回まで", True, "ソフトボールの試合は、きほん7回です。大会では短くすることもあります。"),
+            ("9回まで", False, "9回は野球でよく使う回数です。"),
+            ("3アウトなしでずっと続く", False, "ソフトボールも、回とアウトで試合が進みます。"),
+        ),
+        point="ソフトボールの試合は、きほん7回までです。",
+    ),
+    make_question(
+        question_id="rule-baseball-diff-reentry",
+        rule_topic=RuleTopic.BASEBALL_DIFFERENCES,
+        outs=0,
+        runners=RunnerState(),
+        ball="野球とソフトボールをくらべる",
+        note="選手が交代する時のちがい。",
+        prompt="スタメンがいったんベンチに下がったら？",
+        options=(
+            ("同じ打順に、1回だけ戻れることがある", True, "ソフトボールにはリエントリーという、また出られるルールがあります。"),
+            ("ぜったいに試合へ戻れない", False, "ソフトボールでは、スタメンが戻れるルールがあります。"),
+            ("どの打順にも自由に戻れる", False, "戻る時は、自分の元の打順に戻ります。"),
+        ),
+        point="リエントリーでは、スタメンが1回だけ元の打順に戻れることがあります。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+)
+
+
 RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     *OUT_RULE_QUESTIONS,
     *FORCE_TAG_RULE_QUESTIONS,
     *FAIR_FOUL_RULE_QUESTIONS,
     *RUNNING_RULE_QUESTIONS,
     *GAME_FLOW_RULE_QUESTIONS,
+    *BASEBALL_DIFFERENCE_RULE_QUESTIONS,
 )

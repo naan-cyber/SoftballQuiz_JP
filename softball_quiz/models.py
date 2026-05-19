@@ -78,6 +78,7 @@ class RuleTopic(str, Enum):
     FAIR_FOUL = "fair_foul"
     RUNNING_RULES = "running_rules"
     GAME_FLOW = "game_flow"
+    BASEBALL_DIFFERENCES = "baseball_differences"
 
     @property
     def label(self) -> str:
@@ -87,6 +88,7 @@ class RuleTopic(str, Enum):
             RuleTopic.FAIR_FOUL: "フェア・ファウル",
             RuleTopic.RUNNING_RULES: "走るルール",
             RuleTopic.GAME_FLOW: "試合の流れ",
+            RuleTopic.BASEBALL_DIFFERENCES: "野球とのちがい",
         }[self]
 
 
@@ -96,6 +98,7 @@ RULE_TOPIC_ORDER: tuple[RuleTopic, ...] = (
     RuleTopic.FAIR_FOUL,
     RuleTopic.RUNNING_RULES,
     RuleTopic.GAME_FLOW,
+    RuleTopic.BASEBALL_DIFFERENCES,
 )
 
 
