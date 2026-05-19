@@ -25,9 +25,9 @@ class DefensivePosition(str, Enum):
         return {
             DefensivePosition.PITCHER: "ピッチャー",
             DefensivePosition.CATCHER: "キャッチャー",
-            DefensivePosition.FIRST_BASE: "1るい",
-            DefensivePosition.SECOND_BASE: "2るい",
-            DefensivePosition.THIRD_BASE: "3るい",
+            DefensivePosition.FIRST_BASE: "ファースト",
+            DefensivePosition.SECOND_BASE: "セカンド",
+            DefensivePosition.THIRD_BASE: "サード",
             DefensivePosition.SHORTSTOP: "ショート",
             DefensivePosition.LEFT_FIELD: "レフト",
             DefensivePosition.CENTER_FIELD: "センター",

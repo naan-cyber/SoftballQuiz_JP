@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections.abc import Callable
 
 import flet as ft
@@ -281,6 +282,34 @@ class ScenarioPanel:
 
     def render_field(self, question: QuizQuestion) -> ft.Control:
         scenario = question.scenario
+        ball_summary = self._field.ball_summary(
+            scenario.batted_ball,
+            scenario.fielding_note,
+            scenario.position,
+        )
+        controls: list[ft.Control] = [
+            ft.Row(
+                spacing=8,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Icon(ft.Icons.SPORTS_BASEBALL, size=20, color=theme.PRIMARY),
+                    ft.Text("ずでみる", size=16, weight=ft.FontWeight.BOLD, color=theme.TEXT),
+                ],
+            )
+        ]
+        if ball_summary is not None:
+            controls.append(_field_note_banner(ball_summary))
+        controls.append(
+            self._field.render(
+                scenario.runners,
+                scenario.position,
+                scenario.runner_role,
+                scenario.rule_topic,
+                scenario.batted_ball,
+                scenario.fielding_note,
+            )
+        )
+
         return ft.Container(
             bgcolor=theme.SURFACE,
             border=ft.Border.all(1, theme.BORDER),
@@ -288,22 +317,7 @@ class ScenarioPanel:
             padding=ft.Padding(14, 14, 14, 14),
             content=ft.Column(
                 spacing=10,
-                controls=[
-                    ft.Row(
-                        spacing=8,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            ft.Icon(ft.Icons.SPORTS_BASEBALL, size=20, color=theme.PRIMARY),
-                            ft.Text("ずでみる", size=16, weight=ft.FontWeight.BOLD, color=theme.TEXT),
-                        ],
-                    ),
-                    self._field.render(
-                        scenario.runners,
-                        scenario.position,
-                        scenario.runner_role,
-                        scenario.rule_topic,
-                    ),
-                ],
+                controls=controls,
             ),
         )
 
@@ -341,13 +355,34 @@ class ScenarioPanel:
 
 
 class FieldDiagram:
+    def ball_summary(
+        self,
+        batted_ball: str,
+        fielding_note: str,
+        active_position: DefensivePosition | None,
+    ) -> str | None:
+        text = f"{batted_ball} {fielding_note}"
+        if self._skip_ball_visual(text):
+            return None
+        if self._possession_point(text, active_position) is not None:
+            kind, state = "ボール", "守る人が持つ"
+        else:
+            kind, state, _ = self._ball_style(
+                text,
+                is_throw=False,
+            )
+        return self._visual_label_text(kind, state)
+
     def render(
         self,
         runners: RunnerState,
         position: DefensivePosition | None,
         runner_role: RunnerRole | None,
         rule_topic: RuleTopic | None,
+        batted_ball: str,
+        fielding_note: str,
     ) -> ft.Control:
+        ball_visual = self._ball_visual_controls(batted_ball, fielding_note, position)
         return ft.Container(
             height=345,
             bgcolor=theme.FIELD,
@@ -366,6 +401,7 @@ class FieldDiagram:
                         opacity=0.35,
                         border_radius=4,
                     ),
+                    *self._foul_line_controls(),
                     self._base(
                         "2るい",
                         runners.second,
@@ -395,6 +431,7 @@ class FieldDiagram:
                         236,
                     ),
                     *self._fielders(position),
+                    *ball_visual,
                 ],
             ),
         )
@@ -439,10 +476,10 @@ class FieldDiagram:
     def _fielders(self, active_position: DefensivePosition | None) -> list[ft.Control]:
         spots = {
             DefensivePosition.PITCHER: ("ピッチャー", 126, 150),
-            DefensivePosition.CATCHER: ("キャッチャー", 126, 315),
-            DefensivePosition.FIRST_BASE: ("1るい", 238, 190),
-            DefensivePosition.SECOND_BASE: ("2るい", 198, 106),
-            DefensivePosition.THIRD_BASE: ("3るい", 18, 190),
+            DefensivePosition.CATCHER: ("キャッチャー", 126, 286),
+            DefensivePosition.FIRST_BASE: ("ファースト", 202, 184),
+            DefensivePosition.SECOND_BASE: ("セカンド", 198, 106),
+            DefensivePosition.THIRD_BASE: ("サード", 50, 184),
             DefensivePosition.SHORTSTOP: ("ショート", 58, 106),
             DefensivePosition.LEFT_FIELD: ("レフト", 24, 48),
             DefensivePosition.CENTER_FIELD: ("センター", 126, 28),
@@ -470,6 +507,542 @@ class FieldDiagram:
                 color=ft.Colors.WHITE if active else theme.TEXT_MUTED,
             ),
         )
+
+    def _ball_visual_controls(
+        self,
+        batted_ball: str,
+        fielding_note: str,
+        active_position: DefensivePosition | None,
+    ) -> list[ft.Control]:
+        text = f"{batted_ball} {fielding_note}"
+        if self._skip_ball_visual(text):
+            return []
+
+        possession_point = self._possession_point(text, active_position)
+        if possession_point is not None:
+            kind, state, color = "ボール", "守る人が持つ", theme.PRIMARY
+            return [
+                self._ball_marker(possession_point[0] - 10, possession_point[1] - 10, color),
+                self._ball_label(kind, state, 12, 12, color),
+            ]
+
+        kind, state, color = self._ball_style(text, is_throw=False)
+        start = (160, 255)
+        end = self._location_point(batted_ball) or self._location_point(text) or (160, 120)
+
+        return [
+            *self._path_controls(start, end, color, kind, False),
+            self._ball_marker(end[0] - 10, end[1] - 10, color),
+            self._ball_label(kind, state, 12, 12, color),
+        ]
+
+    def _possession_point(
+        self,
+        text: str,
+        active_position: DefensivePosition | None,
+    ) -> tuple[int, int] | None:
+        possession_words = (
+            "ボールが返ってきた",
+            "ボールが来る",
+            "ボールがなげられた",
+            "ボールをとったあと",
+            "ボールを持って",
+            "なげようとしている",
+        )
+        if not any(word in text for word in possession_words):
+            return None
+        if "ピッチャーのボールをとったあと" in text:
+            return (160, 300)
+        return self._throw_source(text) or (
+            self._position_point(active_position) if active_position is not None else None
+        )
+
+    def _skip_ball_visual(self, text: str) -> bool:
+        no_ball_words = (
+            "プレイボール",
+            "ゲームセット",
+            "攻守交代",
+            "打席に入る",
+            "ボックスを出",
+            "まだ投げる前",
+            "投げる前の準備",
+            "ストライクを3つ",
+            "ベースから少し離れた",
+            "3つ目のアウト",
+            "一回の表",
+        )
+        if any(word in text for word in no_ball_words):
+            return True
+
+        ball_words = (
+            "ゴロ",
+            "フライ",
+            "ライナー",
+            "バント",
+            "ヒット",
+            "打球",
+            "ボール",
+            "なげ",
+            "返",
+            "送球",
+            "キャッチ",
+            "転が",
+            "バウンド",
+            "ファウル",
+            "フェア",
+        )
+        return not any(word in text for word in ball_words)
+
+    def _ball_style(self, text: str, *, is_throw: bool) -> tuple[str, str, str]:
+        if is_throw:
+            return "返球", "ボールが向かう", theme.ERROR
+
+        if "フライ" in text:
+            kind = "フライ"
+            color = "#2F80ED"
+        elif "ライナー" in text:
+            kind = "ライナー"
+            color = "#7B3FB2"
+        elif "バント" in text:
+            kind = "バント"
+            color = theme.WARNING
+        elif "ゴロ" in text:
+            kind = "ゴロ"
+            color = theme.PRIMARY_DARK
+        elif "ヒット" in text:
+            kind = "ヒット"
+            color = theme.PRIMARY_DARK
+        elif "ファウル" in text:
+            kind = "ファウル"
+            color = theme.WARNING
+        elif "打球" in text:
+            kind = "打球"
+            color = theme.PRIMARY_DARK
+        else:
+            kind = "ボール"
+            color = theme.PRIMARY
+
+        if "ボールが返ってきた" in text or "ボールが来る" in text or "ボールがなげられた" in text:
+            state = "守る人が持つ"
+        elif "ピッチャーのボールをとったあと" in text:
+            state = "キャッチャーが持つ"
+        elif "それた" in text or "そらした" in text:
+            state = "それた"
+        elif "止まった" in text or "止まっている" in text:
+            state = "止まった"
+        elif "ぬける" in text or "ぬけそう" in text:
+            state = "ぬける"
+        elif "ボールを持って" in text:
+            state = "守る人が持つ"
+        elif (
+            "キャッチした" in text
+            or "キャッチされた" in text
+            or "しっかりとった" in text
+            or "とったあと" in text
+            or "とられた" in text
+        ):
+            state = "とられた"
+        elif (
+            "とられそう" in text
+            or "とられるか" in text
+            or "とれそう" in text
+            or "落ちそう" in text
+            or "まだ分からない" in text
+        ):
+            state = "まだ空中"
+        elif "落ちた" in text or "転が" in text or "バウンド" in text or kind in ("ゴロ", "バント", "ヒット"):
+            state = "地面"
+        elif kind in ("フライ", "ライナー"):
+            state = "まだ空中"
+        else:
+            state = "位置"
+
+        return kind, state, color
+
+    def _throw_points(
+        self,
+        text: str,
+        active_position: DefensivePosition | None,
+    ) -> tuple[tuple[int, int], tuple[int, int]] | None:
+        throw_words = ("なげ", "返", "送球", "ボールが来る", "ボールがなげられた")
+        if not any(word in text for word in throw_words):
+            return None
+
+        target = self._throw_target(text)
+        if target is None:
+            return None
+
+        source = self._throw_source(text)
+        if source is None and active_position is not None:
+            source = self._position_point(active_position)
+        if source is None:
+            source = (160, 255)
+        if source == target:
+            return None
+        return source, target
+
+    def _throw_source(self, text: str) -> tuple[int, int] | None:
+        if "キャッチャーから" in text or "キャッチャーが" in text:
+            return (160, 300)
+        if "ピッチャーから" in text or "ピッチャーが" in text:
+            return (160, 168)
+        if "ショートから" in text or "ショートが" in text:
+            return (92, 122)
+        if "ファーストから" in text or "ファーストが" in text:
+            return (250, 188)
+        if "セカンドから" in text or "セカンドが" in text or "2るい手が" in text:
+            return (210, 120)
+        if "サードから" in text or "サードが" in text or "3るい手が" in text:
+            return (74, 188)
+        if "レフト" in text:
+            return (58, 64)
+        if "センター" in text:
+            return (160, 46)
+        if "ライト" in text:
+            return (264, 64)
+        return None
+
+    def _throw_target(self, text: str) -> tuple[int, int] | None:
+        if "本るいへ" in text or "ホームへ" in text or "本るいに" in text:
+            return (160, 255)
+        if "1るいへ" in text or "一るいへ" in text or "1るいに" in text:
+            return (246, 170)
+        if "2るいへ" in text or "二るいへ" in text or "2るいに" in text:
+            return (160, 82)
+        if "3るいへ" in text or "三るいへ" in text or "3るいに" in text:
+            return (74, 170)
+        if "キャッチャーの後ろ" in text:
+            return (160, 325)
+        return None
+
+    def _location_point(self, text: str) -> tuple[int, int] | None:
+        foul_point = self._foul_location_point(text)
+        if foul_point is not None:
+            return foul_point
+
+        fair_hit_point = self._fair_hit_location_point(text)
+        if fair_hit_point is not None:
+            return fair_hit_point
+
+        checks: tuple[tuple[tuple[str, ...], tuple[int, int]], ...] = (
+            (("キャッチャーの後ろ",), (160, 325)),
+            (("本るい前",), (160, 238)),
+            (("キャッチャー",), (160, 300)),
+            (("ピッチャー前", "ピッチャー正面", "ピッチャーへの"), (160, 166)),
+            (("1るいと2るいの間",), (203, 126)),
+            (("ファースト正面", "1るいの近く", "1るいの右", "1るい線", "1るい前", "ファースト"), (212, 174)),
+            (("サード正面", "3るい手", "3るい線", "3るい前", "3るい横"), (104, 174)),
+            (("ショートの左",), (112, 130)),
+            (("ショート",), (92, 122)),
+            (("左中間",), (105, 52)),
+            (("右中間",), (220, 52)),
+            (("レフト",), (58, 64)),
+            (("センター",), (160, 46)),
+            (("ライト",), (264, 64)),
+            (("1・2るい間",), (212, 174)),
+            (("2るい手", "2るいベース", "2るい手前"), (210, 118)),
+            (("外野",), (160, 58)),
+            (("内野",), (160, 140)),
+            (("高いフライ",), (160, 58)),
+            (("満るいでゴロ", "バッターがゴロ", "ゴロ"), (160, 140)),
+        )
+        for words, point in checks:
+            if any(word in text for word in words):
+                return point
+        return None
+
+    def _fair_hit_location_point(self, text: str) -> tuple[int, int] | None:
+        fair_words = (
+            "ヒット",
+            "ライト前",
+            "レフト前",
+            "センター前",
+            "左中間",
+            "右中間",
+            "外野の間",
+            "ぬけそう",
+            "ぬけた",
+        )
+        if not any(word in text for word in fair_words):
+            return None
+        if "ファウル" in text or "ラインの外" in text:
+            return None
+
+        if "左中間" in text:
+            return (112, 58)
+        if "右中間" in text:
+            return (208, 58)
+        if "レフト" in text:
+            return (72, 78)
+        if "ライト" in text:
+            return (248, 78)
+        if "センター" in text or "外野の間" in text:
+            return (160, 58)
+        return (160, 70)
+
+    def _foul_location_point(self, text: str) -> tuple[int, int] | None:
+        is_foul_area = (
+            "ラインの外" in text
+            or "ファウルラインの外" in text
+            or "ファウルの場所" in text
+            or "ファウルボール" in text
+        )
+        if not is_foul_area:
+            return None
+
+        if "1るいベースの上を通って" in text and "ラインの外へ" in text:
+            return (302, 86)
+        if "1るいより手前" in text and "ラインの外" in text:
+            return (204, 212)
+        if "1るい" in text or "ライト" in text:
+            return (292, 92 if "外野" in text else 226)
+        if "3るい" in text or "レフト" in text:
+            return (28, 92 if "外野" in text else 226)
+        if "外野" in text:
+            return (328, 84)
+        return (34, 226)
+
+    def _position_point(self, position: DefensivePosition) -> tuple[int, int]:
+        return {
+            DefensivePosition.PITCHER: (160, 168),
+            DefensivePosition.CATCHER: (160, 300),
+            DefensivePosition.FIRST_BASE: (236, 184),
+            DefensivePosition.SECOND_BASE: (210, 120),
+            DefensivePosition.THIRD_BASE: (84, 184),
+            DefensivePosition.SHORTSTOP: (92, 122),
+            DefensivePosition.LEFT_FIELD: (58, 64),
+            DefensivePosition.CENTER_FIELD: (160, 46),
+            DefensivePosition.RIGHT_FIELD: (264, 64),
+        }[position]
+
+    def _path_controls(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+        kind: str,
+        is_throw: bool,
+    ) -> list[ft.Control]:
+        if is_throw:
+            return self._straight_path_controls(start, end, color)
+        if kind in ("フライ", "ライナー"):
+            return self._arc_path_controls(start, end, color, high=kind == "フライ")
+        if kind in ("ゴロ", "バント", "ヒット"):
+            return self._rolling_path_controls(start, end, color)
+        return self._straight_path_controls(start, end, color)
+
+    def _foul_line_controls(self) -> list[ft.Control]:
+        home = (160, 255)
+        first_side = (312, 108)
+        third_side = (8, 108)
+        return [
+            self._segment_between(home, first_side, "#F8FFF8", height=2, opacity=0.95),
+            self._segment_between(home, third_side, "#F8FFF8", height=2, opacity=0.95),
+        ]
+
+    def _straight_path_controls(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+    ) -> list[ft.Control]:
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        length = max(24, math.hypot(dx, dy))
+        angle = math.atan2(dy, dx)
+        mid_x = (start[0] + end[0]) / 2
+        mid_y = (start[1] + end[1]) / 2
+        return [
+            self._segment_control(mid_x, mid_y, length, angle, color, height=4, opacity=0.75),
+            self._arrow_control(end, angle, color),
+        ]
+
+    def _arc_path_controls(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+        *,
+        high: bool,
+    ) -> list[ft.Control]:
+        lift = 64 if high else 36
+        control = (
+            (start[0] + end[0]) / 2,
+            max(14, min(start[1], end[1]) - lift),
+        )
+        points = [self._quadratic_point(start, control, end, index / 14) for index in range(15)]
+        controls = self._polyline_controls(points, color, height=4, opacity=0.78)
+        angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
+        controls.append(self._arrow_control(end, angle, color))
+        return controls
+
+    def _rolling_path_controls(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+    ) -> list[ft.Control]:
+        points = [self._wave_point(start, end, index / 18) for index in range(19)]
+        controls = self._polyline_controls(points, color, height=3, opacity=0.7, every_other=True)
+        angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
+        controls.append(self._arrow_control(end, angle, color))
+        return controls
+
+    def _segment_between(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+        *,
+        height: int,
+        opacity: float,
+    ) -> ft.Control:
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        return self._segment_control(
+            (start[0] + end[0]) / 2,
+            (start[1] + end[1]) / 2,
+            max(8, math.hypot(dx, dy)),
+            math.atan2(dy, dx),
+            color,
+            height=height,
+            opacity=opacity,
+        )
+
+    def _polyline_controls(
+        self,
+        points: list[tuple[float, float]],
+        color: str,
+        *,
+        height: int,
+        opacity: float,
+        every_other: bool = False,
+    ) -> list[ft.Control]:
+        controls: list[ft.Control] = []
+        for index, (start, end) in enumerate(zip(points, points[1:])):
+            if every_other and index % 2 == 1:
+                continue
+            dx = end[0] - start[0]
+            dy = end[1] - start[1]
+            length = max(8, math.hypot(dx, dy))
+            angle = math.atan2(dy, dx)
+            controls.append(
+                self._segment_control(
+                    (start[0] + end[0]) / 2,
+                    (start[1] + end[1]) / 2,
+                    length,
+                    angle,
+                    color,
+                    height=height,
+                    opacity=opacity,
+                )
+            )
+        return controls
+
+    def _segment_control(
+        self,
+        center_x: float,
+        center_y: float,
+        length: float,
+        angle: float,
+        color: str,
+        *,
+        height: int,
+        opacity: float,
+    ) -> ft.Control:
+        return ft.Container(
+            left=center_x - length / 2,
+            top=center_y - height / 2,
+            width=length,
+            height=height,
+            bgcolor=color,
+            opacity=opacity,
+            border_radius=height,
+            rotate=angle,
+        )
+
+    def _arrow_control(self, end: tuple[int, int], angle: float, color: str) -> ft.Control:
+        return ft.Icon(
+            ft.Icons.ARROW_FORWARD,
+            left=end[0] - 6,
+            top=end[1] - 12,
+            size=22,
+            color=color,
+            rotate=angle,
+        )
+
+    def _quadratic_point(
+        self,
+        start: tuple[int, int],
+        control: tuple[float, float],
+        end: tuple[int, int],
+        t: float,
+    ) -> tuple[float, float]:
+        inv = 1 - t
+        return (
+            inv * inv * start[0] + 2 * inv * t * control[0] + t * t * end[0],
+            inv * inv * start[1] + 2 * inv * t * control[1] + t * t * end[1],
+        )
+
+    def _wave_point(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        t: float,
+    ) -> tuple[float, float]:
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        length = max(1, math.hypot(dx, dy))
+        normal = (-dy / length, dx / length)
+        bounce = math.sin(t * math.pi * 8) * 5
+        return (
+            start[0] + dx * t + normal[0] * bounce,
+            start[1] + dy * t + normal[1] * bounce,
+        )
+
+    def _ball_marker(self, left: int, top: int, color: str) -> ft.Control:
+        return ft.Container(
+            left=left,
+            top=top,
+            width=20,
+            height=20,
+            bgcolor="#FFFDF7",
+            border=ft.Border.all(3, color),
+            border_radius=10,
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text("●", size=8, color=color),
+        )
+
+    def _ball_label(self, kind: str, state: str, left: int, top: int, color: str) -> ft.Control:
+        return ft.Container(
+            left=left,
+            top=top,
+            bgcolor="#FFFFFFDD",
+            border=ft.Border.all(1, color),
+            border_radius=theme.CARD_RADIUS,
+            padding=ft.Padding(8, 5, 8, 5),
+            content=ft.Row(
+                spacing=6,
+                controls=[
+                    ft.Icon(ft.Icons.SPORTS_BASEBALL, size=14, color=color),
+                    ft.Text(
+                        self._visual_label_text(kind, state),
+                        size=12,
+                        color=theme.TEXT,
+                        weight=ft.FontWeight.W_600,
+                    ),
+                ],
+            ),
+        )
+
+    def _visual_label_text(self, kind: str, state: str) -> str:
+        if kind == "返球":
+            return "返球: ボールが向かう"
+        if kind == "ボール":
+            if state == "位置":
+                return "ボールの位置"
+            return f"ボール: {state}"
+        return f"{kind}: {state}"
 
 
 class QuestionPanel:
@@ -744,6 +1317,29 @@ def _role_banner(text: str, icon: ft.Icons) -> ft.Control:
                     size=15,
                     color=theme.PRIMARY_DARK,
                     weight=ft.FontWeight.BOLD,
+                    expand=True,
+                ),
+            ],
+        ),
+    )
+
+
+def _field_note_banner(text: str) -> ft.Control:
+    return ft.Container(
+        bgcolor="#F7FAF7",
+        border=ft.Border.all(1, theme.BORDER),
+        border_radius=theme.CARD_RADIUS,
+        padding=ft.Padding(10, 7, 10, 7),
+        content=ft.Row(
+            spacing=8,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Icon(ft.Icons.SPORTS_BASEBALL, size=16, color=theme.PRIMARY),
+                ft.Text(
+                    kids_text(text),
+                    size=12,
+                    color=theme.TEXT,
+                    weight=ft.FontWeight.W_600,
                     expand=True,
                 ),
             ],
