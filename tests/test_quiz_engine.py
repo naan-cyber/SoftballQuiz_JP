@@ -176,6 +176,7 @@ class QuestionDataTest(unittest.TestCase):
         diagram = FieldDiagram()
 
         self.assertEqual((160, 166), diagram._location_point("ピッチャー前のゆるいゴロ"))
+        self.assertEqual((160, 166), diagram._location_point("ピッチャーの近くに高いフライ"))
         self.assertEqual((112, 130), diagram._location_point("ショートの左へゴロ。2るいランナーが3るいへ走りそう"))
         self.assertEqual((104, 174), diagram._location_point("3るい手前の強いゴロ 満るい。本るいへなげても間に合う強さ。"))
         self.assertEqual((203, 126), diagram._location_point("ランナーが1るいと2るいの間で止まった"))
@@ -205,6 +206,13 @@ class QuestionDataTest(unittest.TestCase):
         self.assertGreater(len(caught), len(uncaught))
         self.assertTrue(diagram._is_caught_state("とられた"))
         self.assertFalse(diagram._is_caught_state("まだ空中"))
+
+    def test_vertical_fly_arc_bends_sideways(self) -> None:
+        diagram = FieldDiagram()
+
+        self.assertEqual(-34, diagram._arc_side_offset((160, 255), (160, 58), high=True))
+        self.assertEqual(-24, diagram._arc_side_offset((160, 255), (160, 166), high=False))
+        self.assertEqual(0, diagram._arc_side_offset((160, 255), (212, 174), high=True))
 
     def test_grounder_path_uses_small_connected_bounces(self) -> None:
         diagram = FieldDiagram()

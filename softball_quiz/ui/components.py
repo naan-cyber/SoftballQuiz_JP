@@ -740,6 +740,8 @@ class FieldDiagram:
             (("キャッチャーの後ろ",), (160, 325)),
             (("本るい前",), (160, 238)),
             (("キャッチャー",), (160, 300)),
+            (("ピッチャーの近く",), (160, 166)),
+            (("ピッチャーと",), (188, 182)),
             (("ピッチャー前", "ピッチャー正面", "ピッチャーへの"), (160, 166)),
             (("1るいと2るいの間",), (203, 126)),
             (("1るい線の白いラインの上",), (204, 212)),
@@ -890,8 +892,9 @@ class FieldDiagram:
         dashed: bool,
     ) -> list[ft.Control]:
         lift = 64 if high else 36
+        side_offset = self._arc_side_offset(start, end, high=high)
         control = (
-            (start[0] + end[0]) / 2,
+            (start[0] + end[0]) / 2 + side_offset,
             max(14, min(start[1], end[1]) - lift),
         )
         point_count = 33 if dashed else 25
@@ -903,6 +906,18 @@ class FieldDiagram:
         angle = math.atan2(points[-1][1] - points[-2][1], points[-1][0] - points[-2][0])
         controls.append(self._arrow_control(end, angle, color))
         return controls
+
+    def _arc_side_offset(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        *,
+        high: bool,
+    ) -> int:
+        if abs(end[0] - start[0]) >= 28:
+            return 0
+        direction = -1 if end[0] <= start[0] else 1
+        return direction * (34 if high else 24)
 
     def _grounder_path_controls(
         self,
