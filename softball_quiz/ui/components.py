@@ -259,6 +259,7 @@ class ScenarioPanel:
                         run_spacing=12,
                         wrap=True,
                         controls=[
+                            _summary_tile("問題No.", question.id, ft.Icons.INFO, 220),
                             _summary_tile(
                                 self._actor_label_title(question),
                                 scenario.actor_label,
