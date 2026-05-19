@@ -793,7 +793,7 @@ class FieldDiagram:
             return None
 
         if "1るいベースの上を通って" in text and "ラインの外へ" in text:
-            return (302, 86)
+            return (328, 84)
         if "1るいより手前" in text and "ラインの外" in text:
             return (204, 212)
         if "1るい" in text or "ライト" in text:

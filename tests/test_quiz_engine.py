@@ -134,6 +134,15 @@ class QuestionDataTest(unittest.TestCase):
         self.assertEqual((328, 84), point)
         self.assertFalse(self._is_inside_fair_lines(point))
 
+    def test_past_first_base_then_foul_lands_outside_first_base_line(self) -> None:
+        diagram = FieldDiagram()
+        question = next(question for question in QUESTIONS if question.id == "rule-past-base-then-foul")
+
+        point = diagram._location_point(question.scenario.batted_ball)
+
+        self.assertEqual((328, 84), point)
+        self.assertFalse(self._is_inside_fair_lines(point))
+
     def test_throw_scenarios_show_possession_instead_of_destination(self) -> None:
         diagram = FieldDiagram()
 
