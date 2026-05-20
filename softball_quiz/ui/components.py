@@ -1233,19 +1233,65 @@ class StrikeZoneDiagram:
 
     def _swing_marks(self) -> list[ft.Control]:
         return [
-            self._segment_between((235, 130), (292, 104), "#C9B28E", height=3, opacity=0.52),
-            self._segment_between((232, 158), (300, 148), "#C9B28E", height=3, opacity=0.52),
-            self._segment_between((244, 184), (306, 198), "#C9B28E", height=3, opacity=0.42),
+            *self._curved_swing_mark((292, 130), (338, 94), lift=20, opacity=0.62),
+            *self._curved_swing_mark((286, 144), (334, 112), lift=16, opacity=0.5),
+            *self._curved_swing_mark((280, 158), (328, 132), lift=12, opacity=0.4),
         ]
 
+    def _curved_swing_mark(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        *,
+        lift: int,
+        opacity: float,
+    ) -> list[ft.Control]:
+        control = ((start[0] + end[0]) / 2, min(start[1], end[1]) - lift)
+        points = [
+            self._quadratic_point(start, control, end, index / 8)
+            for index in range(9)
+        ]
+        return [
+            self._segment_between(
+                (round(a[0]), round(a[1])),
+                (round(b[0]), round(b[1])),
+                "#C9B28E",
+                height=3,
+                opacity=opacity,
+            )
+            for a, b in zip(points, points[1:])
+        ]
+
+    def _quadratic_point(
+        self,
+        start: tuple[int, int],
+        control: tuple[float, float],
+        end: tuple[int, int],
+        t: float,
+    ) -> tuple[float, float]:
+        inv = 1 - t
+        return (
+            inv * inv * start[0] + 2 * inv * t * control[0] + t * t * end[0],
+            inv * inv * start[1] + 2 * inv * t * control[1] + t * t * end[1],
+        )
+
     def _contact_marks(self, point: tuple[int, int]) -> list[ft.Control]:
-        color = "#D64545"
+        color = "#F2B84B"
         x, y = point
         return [
-            self._segment_between((x - 18, y), (x + 18, y), color, height=3, opacity=0.9),
-            self._segment_between((x, y - 18), (x, y + 18), color, height=3, opacity=0.9),
-            self._segment_between((x - 13, y - 13), (x + 13, y + 13), color, height=3, opacity=0.9),
-            self._segment_between((x - 13, y + 13), (x + 13, y - 13), color, height=3, opacity=0.9),
+            self._segment_between((x + 6, y - 2), (x + 24, y - 14), color, height=3, opacity=0.95),
+            self._segment_between((x + 8, y + 2), (x + 26, y + 10), color, height=3, opacity=0.9),
+            self._segment_between((x + 3, y - 7), (x + 9, y - 27), "#D64545", height=3, opacity=0.9),
+            self._segment_between((x + 1, y + 7), (x + 8, y + 26), "#D64545", height=3, opacity=0.82),
+            ft.Container(
+                left=x + 12,
+                top=y - 6,
+                width=8,
+                height=8,
+                bgcolor="#F8E27B",
+                border_radius=4,
+                opacity=0.95,
+            ),
         ]
 
     def _zone(self) -> ft.Control:
