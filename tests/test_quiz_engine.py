@@ -178,6 +178,7 @@ class QuestionDataTest(unittest.TestCase):
         self.assertEqual((160, 166), diagram._location_point("ピッチャー前のゆるいゴロ"))
         self.assertEqual((160, 166), diagram._location_point("ピッチャーの近くに高いフライ"))
         self.assertEqual((112, 130), diagram._location_point("ショートの左へゴロ。2るいランナーが3るいへ走りそう"))
+        self.assertEqual((104, 174), diagram._location_point("バッターが3るいの近くへゴロを打った"))
         self.assertEqual((104, 174), diagram._location_point("3るい手前の強いゴロ 満るい。本るいへなげても間に合う強さ。"))
         self.assertEqual((203, 126), diagram._location_point("ランナーが1るいと2るいの間で止まった"))
         self.assertEqual((160, 58), diagram._location_point("バッターが高いフライを打った"))
