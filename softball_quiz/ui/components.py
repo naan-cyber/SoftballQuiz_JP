@@ -1198,12 +1198,15 @@ class StrikeZoneDiagram:
     def _batter_silhouette(self) -> list[ft.Control]:
         color = "#BDBDBB"
         return [
-            ft.Container(left=262, top=74, width=42, height=42, bgcolor=color, opacity=0.45, border_radius=22),
-            ft.Container(left=254, top=116, width=48, height=108, bgcolor=color, opacity=0.45, border_radius=20),
-            ft.Container(left=264, top=218, width=32, height=86, bgcolor=color, opacity=0.45, border_radius=14, rotate=0.18),
-            ft.Container(left=230, top=118, width=72, height=12, bgcolor=color, opacity=0.45, border_radius=6, rotate=-0.7),
-            ft.Container(left=268, top=46, width=92, height=8, bgcolor=color, opacity=0.45, border_radius=4, rotate=-0.82),
-            ft.Container(left=248, top=236, width=34, height=74, bgcolor=color, opacity=0.45, border_radius=14, rotate=-0.2),
+            ft.Container(left=266, top=70, width=34, height=34, bgcolor=color, opacity=0.48, border_radius=18),
+            ft.Container(left=258, top=108, width=42, height=76, bgcolor=color, opacity=0.48, border_radius=18, rotate=-0.08),
+            ft.Container(left=238, top=122, width=58, height=11, bgcolor=color, opacity=0.48, border_radius=6, rotate=-0.48),
+            ft.Container(left=248, top=142, width=52, height=11, bgcolor=color, opacity=0.48, border_radius=6, rotate=0.35),
+            ft.Container(left=287, top=40, width=82, height=7, bgcolor="#A8A8A5", opacity=0.62, border_radius=4, rotate=-0.85),
+            ft.Container(left=262, top=178, width=28, height=78, bgcolor=color, opacity=0.48, border_radius=13, rotate=0.28),
+            ft.Container(left=286, top=178, width=26, height=80, bgcolor=color, opacity=0.48, border_radius=13, rotate=-0.24),
+            ft.Container(left=244, top=252, width=48, height=12, bgcolor=color, opacity=0.48, border_radius=6, rotate=-0.08),
+            ft.Container(left=286, top=252, width=48, height=12, bgcolor=color, opacity=0.48, border_radius=6, rotate=0.08),
         ]
 
     def _zone(self) -> ft.Control:
