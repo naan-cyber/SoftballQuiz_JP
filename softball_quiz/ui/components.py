@@ -1120,25 +1120,32 @@ class FieldDiagram:
 
 
 class StrikeZoneDiagram:
-    ZONE_LEFT = 132
-    ZONE_TOP = 94
-    ZONE_WIDTH = 88
-    ZONE_HEIGHT = 126
+    GRID_LEFT = 82
+    GRID_TOP = 54
+    GRID_WIDTH = 198
+    GRID_HEIGHT = 240
+    ZONE_LEFT = 124
+    ZONE_TOP = 112
+    ZONE_WIDTH = 114
+    ZONE_HEIGHT = 138
 
     def render(self, pitch_text: str, note: str) -> ft.Control:
         ball_point = self._pitch_point(pitch_text, note)
         return ft.Container(
             height=345,
-            bgcolor="#F4FAF3",
-            border=ft.Border.all(1, "#C8DDC4"),
+            bgcolor="#F7F7F5",
+            border=ft.Border.all(1, "#D8D8D4"),
             border_radius=theme.CARD_RADIUS,
             clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
             content=ft.Stack(
                 controls=[
+                    self._title_bar(),
+                    self._home_lines(),
+                    self._catcher_silhouette(),
+                    self._batter_silhouette(),
                     self._plate(),
-                    self._batter(),
+                    *self._grid_lines(),
                     self._zone(),
-                    *self._pitch_path((160, 312), ball_point),
                     self._ball_marker(ball_point),
                     self._label(ball_point, pitch_text, note),
                 ],
@@ -1148,53 +1155,82 @@ class StrikeZoneDiagram:
     def _pitch_point(self, pitch_text: str, note: str) -> tuple[int, int]:
         text = f"{pitch_text} {note}"
         if "まん中" in text:
-            return (176, 154)
+            return (181, 181)
         if "高" in text or "上" in text:
-            return (176, 74)
+            return (181, 78)
         if "低" in text or "ワンバウンド" in text:
-            return (176, 248)
+            return (181, 282)
         if "内側" in text:
-            return (106, 154)
+            return (116, 181)
         if "外側" in text or "外れて" in text:
-            return (246, 154)
+            return (268, 181)
         if "ファウル" in text:
-            return (208, 132)
-        return (176, 154)
+            return (214, 144)
+        return (181, 181)
+
+    def _title_bar(self) -> ft.Control:
+        return ft.Container(
+            left=0,
+            top=0,
+            width=360,
+            height=42,
+            bgcolor="#ECECEA",
+            border=ft.Border(
+                bottom=ft.BorderSide(1, "#D7D7D3"),
+            ),
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text("投球の場所", size=15, weight=ft.FontWeight.BOLD, color=theme.TEXT),
+        )
+
+    def _home_lines(self) -> list[ft.Control]:
+        return [
+            self._segment_between((80, 318), (128, 250), "#E0E0DC", height=4, opacity=0.8),
+            self._segment_between((280, 318), (232, 250), "#E0E0DC", height=4, opacity=0.8),
+            self._segment_between((16, 304), (140, 304), "#E0E0DC", height=5, opacity=0.8),
+            self._segment_between((220, 304), (344, 304), "#E0E0DC", height=5, opacity=0.8),
+        ]
 
     def _plate(self) -> ft.Control:
         return ft.Container(
-            left=133,
-            top=282,
-            width=54,
-            height=26,
-            bgcolor="#FFFFFF",
-            border=ft.Border.all(2, "#D8CBA7"),
-            border_radius=4,
-            alignment=ft.Alignment.CENTER,
-            content=ft.Text("本るい", size=11, color=theme.TEXT_MUTED),
+            left=138,
+            top=306,
+            width=84,
+            height=22,
+            bgcolor="#D9D9D5",
+            border=ft.Border.all(1, "#C8C8C4"),
+            border_radius=3,
         )
 
-    def _batter(self) -> ft.Control:
-        return ft.Container(
-            left=45,
-            top=118,
-            width=72,
-            height=122,
-            bgcolor="#FFFFFFCC",
-            border=ft.Border.all(2, theme.PRIMARY),
-            border_radius=8,
-            padding=ft.Padding(6, 6, 6, 6),
-            content=ft.Column(
-                spacing=4,
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Icon(ft.Icons.SPORTS_BASEBALL, size=24, color=theme.PRIMARY),
-                    ft.Text("バッター", size=12, weight=ft.FontWeight.BOLD, color=theme.TEXT),
-                    ft.Container(width=44, height=4, bgcolor="#9B6B43", rotate=-0.7, border_radius=2),
-                ],
-            ),
-        )
+    def _batter_silhouette(self) -> list[ft.Control]:
+        color = "#BDBDBB"
+        return [
+            ft.Container(left=292, top=80, width=42, height=42, bgcolor=color, opacity=0.42, border_radius=22),
+            ft.Container(left=286, top=120, width=44, height=104, bgcolor=color, opacity=0.42, border_radius=20),
+            ft.Container(left=302, top=216, width=30, height=88, bgcolor=color, opacity=0.42, border_radius=14, rotate=0.2),
+            ft.Container(left=258, top=112, width=68, height=12, bgcolor=color, opacity=0.42, border_radius=6, rotate=-0.85),
+            ft.Container(left=302, top=52, width=92, height=8, bgcolor=color, opacity=0.42, border_radius=4, rotate=-0.82),
+        ]
+
+    def _catcher_silhouette(self) -> list[ft.Control]:
+        color = "#BDBDBB"
+        return [
+            ft.Container(left=145, top=112, width=58, height=58, bgcolor=color, opacity=0.35, border_radius=30),
+            ft.Container(left=120, top=166, width=108, height=88, bgcolor=color, opacity=0.35, border_radius=34),
+            ft.Container(left=88, top=188, width=48, height=86, bgcolor=color, opacity=0.35, border_radius=20, rotate=0.28),
+            ft.Container(left=218, top=190, width=48, height=86, bgcolor=color, opacity=0.35, border_radius=20, rotate=-0.28),
+            ft.Container(left=120, top=260, width=34, height=46, bgcolor=color, opacity=0.35, border_radius=12),
+            ft.Container(left=210, top=260, width=34, height=46, bgcolor=color, opacity=0.35, border_radius=12),
+        ]
+
+    def _grid_lines(self) -> list[ft.Control]:
+        controls: list[ft.Control] = []
+        for index in range(6):
+            x = self.GRID_LEFT + self.GRID_WIDTH * index / 5
+            controls.append(self._segment_between((x, self.GRID_TOP), (x, self.GRID_TOP + self.GRID_HEIGHT), "#8E8E8A", height=1, opacity=0.72))
+        for index in range(5):
+            y = self.GRID_TOP + self.GRID_HEIGHT * index / 4
+            controls.append(self._segment_between((self.GRID_LEFT, y), (self.GRID_LEFT + self.GRID_WIDTH, y), "#8E8E8A", height=1, opacity=0.72))
+        return controls
 
     def _zone(self) -> ft.Control:
         return ft.Container(
@@ -1202,17 +1238,8 @@ class StrikeZoneDiagram:
             top=self.ZONE_TOP,
             width=self.ZONE_WIDTH,
             height=self.ZONE_HEIGHT,
-            bgcolor="#FFFFFF55",
-            border=ft.Border.all(3, theme.SECONDARY),
-            border_radius=4,
-            alignment=ft.Alignment.TOP_CENTER,
-            content=ft.Text(
-                "ストライク\nゾーン",
-                size=12,
-                text_align=ft.TextAlign.CENTER,
-                color=theme.TEXT,
-                weight=ft.FontWeight.W_600,
-            ),
+            bgcolor="#FFFFFF22",
+            border=ft.Border.all(3, "#7F7F7A"),
         )
 
     def _pitch_path(self, start: tuple[int, int], end: tuple[int, int]) -> list[ft.Control]:
