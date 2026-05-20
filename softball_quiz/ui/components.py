@@ -1137,7 +1137,7 @@ class StrikeZoneDiagram:
                 controls=[
                     self._title_bar(),
                     *self._home_lines(),
-                    *self._batter_silhouette(),
+                    self._bat(pitch_text, note),
                     self._plate(),
                     self._zone(),
                     self._ball_marker(ball_point),
@@ -1195,19 +1195,19 @@ class StrikeZoneDiagram:
             border_radius=3,
         )
 
-    def _batter_silhouette(self) -> list[ft.Control]:
-        color = "#BDBDBB"
-        return [
-            ft.Container(left=266, top=70, width=34, height=34, bgcolor=color, opacity=0.48, border_radius=18),
-            ft.Container(left=258, top=108, width=42, height=76, bgcolor=color, opacity=0.48, border_radius=18, rotate=-0.08),
-            ft.Container(left=238, top=122, width=58, height=11, bgcolor=color, opacity=0.48, border_radius=6, rotate=-0.48),
-            ft.Container(left=248, top=142, width=52, height=11, bgcolor=color, opacity=0.48, border_radius=6, rotate=0.35),
-            ft.Container(left=287, top=40, width=82, height=7, bgcolor="#A8A8A5", opacity=0.62, border_radius=4, rotate=-0.85),
-            ft.Container(left=262, top=178, width=28, height=78, bgcolor=color, opacity=0.48, border_radius=13, rotate=0.28),
-            ft.Container(left=286, top=178, width=26, height=80, bgcolor=color, opacity=0.48, border_radius=13, rotate=-0.24),
-            ft.Container(left=244, top=252, width=48, height=12, bgcolor=color, opacity=0.48, border_radius=6, rotate=-0.08),
-            ft.Container(left=286, top=252, width=48, height=12, bgcolor=color, opacity=0.48, border_radius=6, rotate=0.08),
-        ]
+    def _bat(self, pitch_text: str, note: str) -> ft.Control:
+        text = f"{pitch_text} {note}"
+        swung = "ふって" in text or "空ぶり" in text or "ファウル" in text or "打って" in text
+        return ft.Container(
+            left=236 if swung else 274,
+            top=138 if swung else 70,
+            width=92,
+            height=9,
+            bgcolor="#9B6B43",
+            opacity=0.82,
+            border_radius=5,
+            rotate=0.18 if swung else -1.05,
+        )
 
     def _zone(self) -> ft.Control:
         return ft.Container(
