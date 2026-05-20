@@ -1149,7 +1149,7 @@ class StrikeZoneDiagram:
     def _pitch_point(self, pitch_text: str, note: str) -> tuple[int, int]:
         text = f"{pitch_text} {note}"
         if "ボールが4つ" in text:
-            return (264, 176)
+            return (96, 176)
         if "まん中" in text:
             return (180, 176)
         if "高" in text or "上" in text:
@@ -1159,7 +1159,7 @@ class StrikeZoneDiagram:
         if "内側" in text:
             return (112, 176)
         if "外側" in text or "外れて" in text:
-            return (264, 176)
+            return (96, 176)
         if "ファウル" in text:
             return (210, 142)
         return (180, 176)
