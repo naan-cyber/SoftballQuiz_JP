@@ -92,6 +92,22 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ランナーは、1るい、2るい、3るい、本るいの順にふみます。",
     ),
     make_question(
+        question_id="rule-pass-runner",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="バッターが外野へ長打を打った",
+        note="1るいランナーが前を走っている。",
+        prompt="バッターランナーが気をつけることは？",
+        options=(
+            ("前のランナーを追いこさない", True, "前のランナーを追いこすとアウトになることがあります。"),
+            ("前のランナーをぬいてよい", False, "ランナーは順番を守って走ります。"),
+            ("3るいから走り始める", False, "バッターランナーは本るいから1るいへ進みます。"),
+        ),
+        point="走る順番を守り、前のランナーを追いこしません。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
         question_id="br-walk-watch-ball",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
@@ -194,6 +210,22 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="ボールが大きくそれた時は、コーチを見て次のるいをねらいます。",
     ),
+    make_question(
+        question_id="rule-leaving-base-early",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="ピッチャーがまだ投げる前",
+        note="1るいランナーが先に1るいから離れた。",
+        prompt="これはどうなる？",
+        options=(
+            ("早く離れすぎなのでアウトになることがある", True, "ソフトボールでは、投球前に勝手にるいを離れないことが大切です。大会ルールで細かい基準は確認します。"),
+            ("いつでも好きに離れてよい", False, "投球前に離るいすると反則になることがあります。"),
+            ("バッターがアウトになる", False, "この問題では、早く離れたランナーの反則です。"),
+        ),
+        point="ランナーは、ピッチャーが投げる前に勝手にるいを離れません。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
 )
 
 
@@ -255,6 +287,21 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="タッチアップは、キャッチ後に元のるいから進みます。",
         difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="rule-tag-up-after-catch",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=1,
+        runners=RunnerState(second=True),
+        ball="外野フライがキャッチされた",
+        note="2るいランナーが3るいへ行きたい。",
+        prompt="いつ走れる？",
+        options=(
+            ("キャッチされたあと、2るいにふれてから走る", True, "フライをとられたら、元のるいに戻ってから進みます。"),
+            ("キャッチ前に3るいへ走りきる", False, "とられた時に元のるいへ戻る必要があります。"),
+            ("1るいへ戻る", False, "元のるいは2るいです。"),
+        ),
+        point="フライをとられた後に進む時は、タッチアップが必要です。",
     ),
     make_question(
         question_id="r2-line-drive-return",

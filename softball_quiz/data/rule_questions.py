@@ -259,26 +259,10 @@ FAIR_FOUL_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
 )
 
 
-RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
-    make_question(
-        question_id="rule-leaving-base-early",
-        rule_topic=RuleTopic.RUNNING_RULES,
-        outs=0,
-        runners=RunnerState(first=True),
-        ball="ピッチャーがまだ投げる前",
-        note="1るいランナーが先に1るいから離れた。",
-        prompt="これはどうなる？",
-        options=(
-            ("早く離れすぎなのでアウトになることがある", True, "ソフトボールでは、投球前に勝手にるいを離れないことが大切です。大会ルールで細かい基準は確認します。"),
-            ("いつでも好きに離れてよい", False, "投球前に離るいすると反則になることがあります。"),
-            ("バッターがアウトになる", False, "この問題では、早く離れたランナーの反則です。"),
-        ),
-        point="ランナーは、ピッチャーが投げる前に勝手にるいを離れません。",
-        difficulty=Difficulty.INTERMEDIATE,
-    ),
+GAME_FLOW_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
         question_id="rule-batter-box-feet",
-        rule_topic=RuleTopic.RUNNING_RULES,
+        rule_topic=RuleTopic.GAME_FLOW,
         outs=0,
         runners=RunnerState(),
         ball="バッターが打席に入る",
@@ -293,7 +277,7 @@ RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     ),
     make_question(
         question_id="rule-batter-step-out-delay",
-        rule_topic=RuleTopic.RUNNING_RULES,
+        rule_topic=RuleTopic.GAME_FLOW,
         outs=0,
         runners=RunnerState(),
         ball="バッターが何度もボックスを出て、試合を止めた",
@@ -306,41 +290,6 @@ RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="バッターは、試合を止めすぎないようにボックスで準備します。",
     ),
-    make_question(
-        question_id="rule-tag-up-after-catch",
-        rule_topic=RuleTopic.RUNNING_RULES,
-        outs=1,
-        runners=RunnerState(second=True),
-        ball="外野フライがキャッチされた",
-        note="2るいランナーが3るいへ行きたい。",
-        prompt="いつ走れる？",
-        options=(
-            ("キャッチされたあと、2るいにふれてから走る", True, "フライをとられたら、元のるいに戻ってから進みます。"),
-            ("キャッチ前に3るいへ走りきる", False, "とられた時に元のるいへ戻る必要があります。"),
-            ("1るいへ戻る", False, "元のるいは2るいです。"),
-        ),
-        point="フライをとられた後に進む時は、タッチアップが必要です。",
-    ),
-    make_question(
-        question_id="rule-pass-runner",
-        rule_topic=RuleTopic.RUNNING_RULES,
-        outs=0,
-        runners=RunnerState(first=True),
-        ball="バッターが外野へ長打を打った",
-        note="1るいランナーが前を走っている。",
-        prompt="バッターランナーが気をつけることは？",
-        options=(
-            ("前のランナーを追いこさない", True, "前のランナーを追いこすとアウトになることがあります。"),
-            ("前のランナーをぬいてよい", False, "ランナーは順番を守って走ります。"),
-            ("3るいから走り始める", False, "バッターランナーは本るいから1るいへ進みます。"),
-        ),
-        point="走る順番を守り、前のランナーを追いこしません。",
-        difficulty=Difficulty.INTERMEDIATE,
-    ),
-)
-
-
-GAME_FLOW_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
         question_id="rule-before-play-ball",
         rule_topic=RuleTopic.GAME_FLOW,
@@ -533,7 +482,6 @@ RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
     *OUT_RULE_QUESTIONS,
     *FORCE_TAG_RULE_QUESTIONS,
     *FAIR_FOUL_RULE_QUESTIONS,
-    *RUNNING_RULE_QUESTIONS,
     *GAME_FLOW_RULE_QUESTIONS,
     *BASEBALL_DIFFERENCE_RULE_QUESTIONS,
 )

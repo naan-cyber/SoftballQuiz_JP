@@ -76,7 +76,6 @@ class RuleTopic(str, Enum):
     OUTS = "outs"
     FORCE_TAG = "force_tag"
     FAIR_FOUL = "fair_foul"
-    RUNNING_RULES = "running_rules"
     GAME_FLOW = "game_flow"
     BASEBALL_DIFFERENCES = "baseball_differences"
 
@@ -86,7 +85,6 @@ class RuleTopic(str, Enum):
             RuleTopic.OUTS: "アウト",
             RuleTopic.FORCE_TAG: "フォース・タッチ",
             RuleTopic.FAIR_FOUL: "フェア・ファウル",
-            RuleTopic.RUNNING_RULES: "走るルール",
             RuleTopic.GAME_FLOW: "試合の流れ",
             RuleTopic.BASEBALL_DIFFERENCES: "野球とのちがい",
         }[self]
@@ -96,7 +94,6 @@ RULE_TOPIC_ORDER: tuple[RuleTopic, ...] = (
     RuleTopic.OUTS,
     RuleTopic.FORCE_TAG,
     RuleTopic.FAIR_FOUL,
-    RuleTopic.RUNNING_RULES,
     RuleTopic.GAME_FLOW,
     RuleTopic.BASEBALL_DIFFERENCES,
 )

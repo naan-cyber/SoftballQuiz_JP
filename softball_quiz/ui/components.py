@@ -341,8 +341,6 @@ class ScenarioPanel:
             return "これはフォース・タッチのルールです。場面を見て、どうアウトにするかをえらびます。"
         if scenario.rule_topic == RuleTopic.FAIR_FOUL:
             return "これはフェア・ファウルのルールです。ボールの場所を見て、どうなるかをえらびます。"
-        if scenario.rule_topic == RuleTopic.RUNNING_RULES:
-            return "これは走るルールです。ランナーやバッターがどうするかをえらびます。"
         if scenario.rule_topic == RuleTopic.GAME_FLOW:
             return "これはしあいの流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
         if scenario.rule_topic == RuleTopic.BASEBALL_DIFFERENCES:
