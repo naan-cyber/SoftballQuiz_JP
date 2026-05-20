@@ -1202,26 +1202,64 @@ class StrikeZoneDiagram:
         ball_point: tuple[int, int],
     ) -> list[ft.Control]:
         controls: list[ft.Control] = []
-        controls.append(self._bat(pitch_text, note))
         if self._is_swung(pitch_text, note):
             controls.extend(self._swing_marks())
+        controls.extend(self._bat_parts(pitch_text, note))
         if self._has_contact(pitch_text, note):
             controls.extend(self._contact_marks(ball_point))
         return controls
 
-    def _bat(self, pitch_text: str, note: str) -> ft.Control:
+    def _bat_parts(self, pitch_text: str, note: str) -> list[ft.Control]:
         swung = self._is_swung(pitch_text, note)
         contact = self._has_contact(pitch_text, note)
-        return ft.Container(
-            left=220 if contact else 236 if swung else 274,
-            top=132 if contact else 138 if swung else 70,
-            width=104 if contact else 92,
-            height=9,
-            bgcolor="#9B6B43",
-            opacity=0.86,
-            border_radius=5,
-            rotate=-0.12 if contact else 0.18 if swung else -1.05,
-        )
+        if contact:
+            barrel_left, barrel_top = 200, 128
+            handle_left, handle_top = 282, 144
+            knob_left, knob_top = 338, 136
+            rotate = 0.06
+        elif swung:
+            barrel_left, barrel_top = 218, 132
+            handle_left, handle_top = 300, 148
+            knob_left, knob_top = 338, 140
+            rotate = 0.12
+        else:
+            barrel_left, barrel_top = 276, 72
+            handle_left, handle_top = 304, 128
+            knob_left, knob_top = 332, 174
+            rotate = -1.05
+
+        return [
+            ft.Container(
+                left=barrel_left,
+                top=barrel_top,
+                width=94,
+                height=36,
+                bgcolor="#111111",
+                opacity=0.88,
+                border_radius=18,
+                rotate=rotate,
+            ),
+            ft.Container(
+                left=handle_left,
+                top=handle_top,
+                width=62,
+                height=10,
+                bgcolor="#111111",
+                opacity=0.88,
+                border_radius=5,
+                rotate=rotate,
+            ),
+            ft.Container(
+                left=knob_left,
+                top=knob_top,
+                width=18,
+                height=26,
+                bgcolor="#111111",
+                opacity=0.88,
+                border_radius=9,
+                rotate=rotate,
+            ),
+        ]
 
     def _is_swung(self, pitch_text: str, note: str) -> bool:
         text = f"{pitch_text} {note}"
@@ -1233,9 +1271,9 @@ class StrikeZoneDiagram:
 
     def _swing_marks(self) -> list[ft.Control]:
         return [
-            *self._curved_swing_mark((248, 138), (336, 76), lift=30, opacity=0.62),
-            *self._curved_swing_mark((248, 145), (336, 98), lift=24, opacity=0.5),
-            *self._curved_swing_mark((248, 152), (334, 122), lift=18, opacity=0.4),
+            *self._curved_swing_mark((204, 122), (342, 54), lift=38, opacity=0.86),
+            *self._curved_swing_mark((210, 134), (344, 78), lift=30, opacity=0.78),
+            *self._curved_swing_mark((216, 146), (344, 102), lift=22, opacity=0.7),
         ]
 
     def _curved_swing_mark(
@@ -1255,7 +1293,7 @@ class StrikeZoneDiagram:
             self._segment_between(
                 (round(a[0]), round(a[1])),
                 (round(b[0]), round(b[1])),
-                "#C9B28E",
+                "#111111",
                 height=3,
                 opacity=opacity,
             )
@@ -1278,18 +1316,25 @@ class StrikeZoneDiagram:
     def _contact_marks(self, point: tuple[int, int]) -> list[ft.Control]:
         color = "#F2B84B"
         x, y = point
+        center_x = x - 8
+        center_y = y + 2
         return [
-            self._segment_between((x + 6, y - 2), (x + 24, y - 14), color, height=3, opacity=0.95),
-            self._segment_between((x + 8, y + 2), (x + 26, y + 10), color, height=3, opacity=0.9),
-            self._segment_between((x + 3, y - 7), (x + 9, y - 27), "#D64545", height=3, opacity=0.9),
-            self._segment_between((x + 1, y + 7), (x + 8, y + 26), "#D64545", height=3, opacity=0.82),
+            self._segment_between((center_x, center_y), (center_x - 22, center_y - 24), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x, center_y - 34), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x + 22, center_y - 24), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x + 30, center_y), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x + 20, center_y + 24), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x, center_y + 34), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x - 22, center_y + 24), color, height=8, opacity=0.95),
+            self._segment_between((center_x, center_y), (center_x - 30, center_y), color, height=8, opacity=0.95),
             ft.Container(
-                left=x + 12,
-                top=y - 6,
-                width=8,
-                height=8,
-                bgcolor="#F8E27B",
-                border_radius=4,
+                left=center_x - 20,
+                top=center_y - 20,
+                width=40,
+                height=40,
+                bgcolor="#111111",
+                border=ft.Border.all(8, color),
+                border_radius=20,
                 opacity=0.95,
             ),
         ]
