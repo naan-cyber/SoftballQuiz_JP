@@ -1137,9 +1137,9 @@ class StrikeZoneDiagram:
                 controls=[
                     self._title_bar(),
                     *self._home_lines(),
-                    *self._bat_controls(pitch_text, note, ball_point),
                     self._plate(),
                     self._zone(),
+                    *self._bat_controls(pitch_text, note, ball_point),
                     self._ball_marker(ball_point),
                     self._label(ball_point, pitch_text, note),
                 ],
@@ -1202,9 +1202,9 @@ class StrikeZoneDiagram:
         ball_point: tuple[int, int],
     ) -> list[ft.Control]:
         controls: list[ft.Control] = []
+        controls.append(self._bat(pitch_text, note))
         if self._is_swung(pitch_text, note):
             controls.extend(self._swing_marks())
-        controls.append(self._bat(pitch_text, note))
         if self._has_contact(pitch_text, note):
             controls.extend(self._contact_marks(ball_point))
         return controls
@@ -1233,9 +1233,9 @@ class StrikeZoneDiagram:
 
     def _swing_marks(self) -> list[ft.Control]:
         return [
-            *self._curved_swing_mark((292, 130), (338, 94), lift=20, opacity=0.62),
-            *self._curved_swing_mark((286, 144), (334, 112), lift=16, opacity=0.5),
-            *self._curved_swing_mark((280, 158), (328, 132), lift=12, opacity=0.4),
+            *self._curved_swing_mark((248, 138), (336, 76), lift=30, opacity=0.62),
+            *self._curved_swing_mark((248, 145), (336, 98), lift=24, opacity=0.5),
+            *self._curved_swing_mark((248, 152), (334, 122), lift=18, opacity=0.4),
         ]
 
     def _curved_swing_mark(
