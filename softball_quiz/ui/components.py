@@ -1120,14 +1120,10 @@ class FieldDiagram:
 
 
 class StrikeZoneDiagram:
-    GRID_LEFT = 82
-    GRID_TOP = 54
-    GRID_WIDTH = 198
-    GRID_HEIGHT = 240
-    ZONE_LEFT = 124
+    ZONE_LEFT = 132
     ZONE_TOP = 112
-    ZONE_WIDTH = 114
-    ZONE_HEIGHT = 138
+    ZONE_WIDTH = 96
+    ZONE_HEIGHT = 128
 
     def render(self, pitch_text: str, note: str) -> ft.Control:
         ball_point = self._pitch_point(pitch_text, note)
@@ -1141,10 +1137,8 @@ class StrikeZoneDiagram:
                 controls=[
                     self._title_bar(),
                     *self._home_lines(),
-                    *self._catcher_silhouette(),
                     *self._batter_silhouette(),
                     self._plate(),
-                    *self._grid_lines(),
                     self._zone(),
                     self._ball_marker(ball_point),
                     self._label(ball_point, pitch_text, note),
@@ -1154,19 +1148,21 @@ class StrikeZoneDiagram:
 
     def _pitch_point(self, pitch_text: str, note: str) -> tuple[int, int]:
         text = f"{pitch_text} {note}"
+        if "ボールが4つ" in text:
+            return (264, 176)
         if "まん中" in text:
-            return (181, 181)
+            return (180, 176)
         if "高" in text or "上" in text:
-            return (181, 78)
+            return (180, 84)
         if "低" in text or "ワンバウンド" in text:
-            return (181, 282)
+            return (180, 274)
         if "内側" in text:
-            return (116, 181)
+            return (112, 176)
         if "外側" in text or "外れて" in text:
-            return (268, 181)
+            return (264, 176)
         if "ファウル" in text:
-            return (214, 144)
-        return (181, 181)
+            return (210, 142)
+        return (180, 176)
 
     def _title_bar(self) -> ft.Control:
         return ft.Container(
@@ -1184,16 +1180,14 @@ class StrikeZoneDiagram:
 
     def _home_lines(self) -> list[ft.Control]:
         return [
-            self._segment_between((80, 318), (128, 250), "#E0E0DC", height=4, opacity=0.8),
-            self._segment_between((280, 318), (232, 250), "#E0E0DC", height=4, opacity=0.8),
-            self._segment_between((16, 304), (140, 304), "#E0E0DC", height=5, opacity=0.8),
-            self._segment_between((220, 304), (344, 304), "#E0E0DC", height=5, opacity=0.8),
+            self._segment_between((86, 318), (138, 294), "#E0E0DC", height=4, opacity=0.75),
+            self._segment_between((274, 318), (222, 294), "#E0E0DC", height=4, opacity=0.75),
         ]
 
     def _plate(self) -> ft.Control:
         return ft.Container(
             left=138,
-            top=306,
+            top=292,
             width=84,
             height=22,
             bgcolor="#D9D9D5",
@@ -1204,33 +1198,13 @@ class StrikeZoneDiagram:
     def _batter_silhouette(self) -> list[ft.Control]:
         color = "#BDBDBB"
         return [
-            ft.Container(left=292, top=80, width=42, height=42, bgcolor=color, opacity=0.42, border_radius=22),
-            ft.Container(left=286, top=120, width=44, height=104, bgcolor=color, opacity=0.42, border_radius=20),
-            ft.Container(left=302, top=216, width=30, height=88, bgcolor=color, opacity=0.42, border_radius=14, rotate=0.2),
-            ft.Container(left=258, top=112, width=68, height=12, bgcolor=color, opacity=0.42, border_radius=6, rotate=-0.85),
-            ft.Container(left=302, top=52, width=92, height=8, bgcolor=color, opacity=0.42, border_radius=4, rotate=-0.82),
+            ft.Container(left=262, top=74, width=42, height=42, bgcolor=color, opacity=0.45, border_radius=22),
+            ft.Container(left=254, top=116, width=48, height=108, bgcolor=color, opacity=0.45, border_radius=20),
+            ft.Container(left=264, top=218, width=32, height=86, bgcolor=color, opacity=0.45, border_radius=14, rotate=0.18),
+            ft.Container(left=230, top=118, width=72, height=12, bgcolor=color, opacity=0.45, border_radius=6, rotate=-0.7),
+            ft.Container(left=268, top=46, width=92, height=8, bgcolor=color, opacity=0.45, border_radius=4, rotate=-0.82),
+            ft.Container(left=248, top=236, width=34, height=74, bgcolor=color, opacity=0.45, border_radius=14, rotate=-0.2),
         ]
-
-    def _catcher_silhouette(self) -> list[ft.Control]:
-        color = "#BDBDBB"
-        return [
-            ft.Container(left=145, top=112, width=58, height=58, bgcolor=color, opacity=0.35, border_radius=30),
-            ft.Container(left=120, top=166, width=108, height=88, bgcolor=color, opacity=0.35, border_radius=34),
-            ft.Container(left=88, top=188, width=48, height=86, bgcolor=color, opacity=0.35, border_radius=20, rotate=0.28),
-            ft.Container(left=218, top=190, width=48, height=86, bgcolor=color, opacity=0.35, border_radius=20, rotate=-0.28),
-            ft.Container(left=120, top=260, width=34, height=46, bgcolor=color, opacity=0.35, border_radius=12),
-            ft.Container(left=210, top=260, width=34, height=46, bgcolor=color, opacity=0.35, border_radius=12),
-        ]
-
-    def _grid_lines(self) -> list[ft.Control]:
-        controls: list[ft.Control] = []
-        for index in range(6):
-            x = self.GRID_LEFT + self.GRID_WIDTH * index / 5
-            controls.append(self._segment_between((x, self.GRID_TOP), (x, self.GRID_TOP + self.GRID_HEIGHT), "#8E8E8A", height=1, opacity=0.72))
-        for index in range(5):
-            y = self.GRID_TOP + self.GRID_HEIGHT * index / 4
-            controls.append(self._segment_between((self.GRID_LEFT, y), (self.GRID_LEFT + self.GRID_WIDTH, y), "#8E8E8A", height=1, opacity=0.72))
-        return controls
 
     def _zone(self) -> ft.Control:
         return ft.Container(
@@ -1292,13 +1266,20 @@ class StrikeZoneDiagram:
         )
 
     def _label(self, point: tuple[int, int], pitch_text: str, note: str) -> ft.Control:
-        zone_text = "ゾーン内" if self._inside_zone(point) else "ゾーン外"
-        if "ふって" in note or "空ぶり" in note:
-            detail = "ふった"
-        elif "ファウル" in pitch_text:
-            detail = "ファウル"
+        text = f"{pitch_text} {note}"
+        if "ボールが4つ" in text:
+            label = "カウント: ボール4つ"
+        elif "2ストライク" in text and "ファウル" in text:
+            label = "カウント: 2ストライク"
         else:
-            detail = "見送った"
+            zone_text = "ゾーン内" if self._inside_zone(point) else "ゾーン外"
+            if "ふって" in note or "空ぶり" in note:
+                detail = "ふった"
+            elif "ファウル" in pitch_text:
+                detail = "ファウル"
+            else:
+                detail = "見送った"
+            label = f"投球: {zone_text} / {detail}"
         return ft.Container(
             left=12,
             top=12,
@@ -1311,7 +1292,7 @@ class StrikeZoneDiagram:
                 controls=[
                     ft.Icon(ft.Icons.SPORTS_BASEBALL, size=14, color="#E07A1F"),
                     ft.Text(
-                        f"投球: {zone_text} / {detail}",
+                        label,
                         size=12,
                         color=theme.TEXT,
                         weight=ft.FontWeight.W_600,

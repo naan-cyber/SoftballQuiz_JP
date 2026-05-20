@@ -53,6 +53,7 @@ class QuestionDataTest(unittest.TestCase):
         self.assertTrue(diagram._inside_zone(diagram._pitch_point("投げたボールがストライクゾーンのまん中を通った", "")))
         self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールがストライクゾーンの外側を通った", "")))
         self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールが高めに外れた", "")))
+        self.assertFalse(diagram._inside_zone(diagram._pitch_point("ボールが4つになった", "")))
 
     def test_filter_returns_only_selected_position(self) -> None:
         for position in POSITION_ORDER:
