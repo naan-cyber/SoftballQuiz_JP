@@ -77,6 +77,21 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
+        question_id="rule-run-bases-in-order",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(),
+        ball="自分がバッターで、長打を打った",
+        note="バッターランナーとして、2るいまで行けそう。",
+        prompt="どう走る？",
+        options=(
+            ("1るいをふんでから2るいへ行く", True, "るいは順番にふむ必要があります。"),
+            ("1るいをとばして2るいへ行く", False, "1るいをふまないと、あとでアウトになることがあります。"),
+            ("本るいから3るいへ逆に走る", False, "るいは順番に進みます。"),
+        ),
+        point="ランナーは、1るい、2るい、3るい、本るいの順にふみます。",
+    ),
+    make_question(
         question_id="br-walk-watch-ball",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,

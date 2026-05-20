@@ -25,7 +25,7 @@ OUT_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
         rule_topic=RuleTopic.OUTS,
         outs=0,
         runners=RunnerState(),
-        ball="内野ゴロを打った",
+        ball="ファースト正面のゴロを打った",
         note="1るい手がボールを持って、バッターより先に1るいをふんだ。",
         prompt="このプレーはどうなる？",
         options=(
@@ -320,21 +320,6 @@ RUNNING_RULE_QUESTIONS: tuple[QuizQuestion, ...] = (
             ("1るいへ戻る", False, "元のるいは2るいです。"),
         ),
         point="フライをとられた後に進む時は、タッチアップが必要です。",
-    ),
-    make_question(
-        question_id="rule-run-bases-in-order",
-        rule_topic=RuleTopic.RUNNING_RULES,
-        outs=0,
-        runners=RunnerState(),
-        ball="自分がバッターで、長打を打った",
-        note="バッターランナーとして、2るいまで行けそう。",
-        prompt="どう走る？",
-        options=(
-            ("1るいをふんでから2るいへ行く", True, "るいは順番にふむ必要があります。"),
-            ("1るいをとばして2るいへ行く", False, "1るいをふまないと、あとでアウトになることがあります。"),
-            ("本るいから3るいへ逆に走る", False, "るいは順番に進みます。"),
-        ),
-        point="ランナーは、1るい、2るい、3るい、本るいの順にふみます。",
     ),
     make_question(
         question_id="rule-pass-runner",

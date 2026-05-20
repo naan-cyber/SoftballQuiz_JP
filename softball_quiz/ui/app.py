@@ -51,8 +51,9 @@ class SoftballQuizApp:
         self.page.scroll = ft.ScrollMode.AUTO
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.theme = ft.Theme(color_scheme_seed=theme.PRIMARY)
-        self.page.window.min_width = 760
+        self.page.window.min_width = 320
         self.page.window.min_height = 720
+        self.page.on_resized = lambda _: self._render()
 
     def _render(self) -> None:
         self.page.controls.clear()
@@ -99,43 +100,56 @@ class SoftballQuizApp:
             )
 
         question = self.engine.current_question
+        is_narrow = (self.page.width or 0) < 760
+        question_controls = ft.Column(
+            spacing=14,
+            controls=[
+                self.question_panel.render(
+                    question=question,
+                    selected_option_id=self.engine.selected_option_id,
+                    on_select=self._select_answer,
+                ),
+                self.feedback_panel.render(
+                    question,
+                    self.engine.selected_option_id,
+                ),
+                self.navigation.render(
+                    answered=self.engine.answered,
+                    is_finished=self.engine.is_finished,
+                    on_next=self._next,
+                    on_restart=self._restart,
+                ),
+            ],
+        )
+        field_controls = self.scenario_panel.render_field(question)
+        if is_narrow:
+            play_area: ft.Control = ft.Column(
+                spacing=14,
+                controls=[
+                    field_controls,
+                    question_controls,
+                ],
+            )
+        else:
+            play_area = ft.Row(
+                spacing=18,
+                vertical_alignment=ft.CrossAxisAlignment.START,
+                controls=[
+                    ft.Container(
+                        width=360,
+                        content=field_controls,
+                    ),
+                    ft.Container(
+                        expand=True,
+                        content=question_controls,
+                    ),
+                ],
+            )
         return ft.Column(
             spacing=16,
             controls=[
                 self.scenario_panel.render(question),
-                ft.Row(
-                    spacing=18,
-                    vertical_alignment=ft.CrossAxisAlignment.START,
-                    controls=[
-                        ft.Container(
-                            width=360,
-                            content=self.scenario_panel.render_field(question),
-                        ),
-                        ft.Container(
-                            expand=True,
-                            content=ft.Column(
-                                spacing=14,
-                                controls=[
-                                    self.question_panel.render(
-                                        question=question,
-                                        selected_option_id=self.engine.selected_option_id,
-                                        on_select=self._select_answer,
-                                    ),
-                                    self.feedback_panel.render(
-                                        question,
-                                        self.engine.selected_option_id,
-                                    ),
-                                    self.navigation.render(
-                                        answered=self.engine.answered,
-                                        is_finished=self.engine.is_finished,
-                                        on_next=self._next,
-                                        on_restart=self._restart,
-                                    ),
-                                ],
-                            ),
-                        ),
-                    ],
-                ),
+                play_area,
             ],
         )
 
