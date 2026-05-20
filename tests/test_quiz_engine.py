@@ -58,7 +58,7 @@ class QuestionDataTest(unittest.TestCase):
         self.assertTrue(diagram._is_swung("投げたボールがストライクゾーンの外側を通った", "バッターがバットをふって、空ぶりした。"))
         self.assertTrue(diagram._has_contact("投げたボールを打って、ファウルになった", ""))
         self.assertEqual(24, len(diagram._swing_marks()))
-        self.assertEqual(9, len(diagram._contact_marks((210, 142))))
+        self.assertEqual(8, len(diagram._contact_marks((210, 142))))
         self.assertGreater(
             len(diagram._bat_controls("投げたボールを打って、ファウルになった", "", (210, 142))),
             len(diagram._bat_controls("投げたボールがストライクゾーンの外側を通った", "バッターがバットをふって、空ぶりした。", (264, 176))),

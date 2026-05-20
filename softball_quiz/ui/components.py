@@ -1224,8 +1224,8 @@ class StrikeZoneDiagram:
             rotate = 0.12
         else:
             barrel_left, barrel_top = 276, 72
-            handle_left, handle_top = 304, 128
-            knob_left, knob_top = 332, 174
+            handle_left, handle_top = 262, 137
+            knob_left, knob_top = 269, 158
             rotate = -1.05
 
         return [
@@ -1327,16 +1327,6 @@ class StrikeZoneDiagram:
             self._segment_between((center_x, center_y), (center_x, center_y + 34), color, height=8, opacity=0.95),
             self._segment_between((center_x, center_y), (center_x - 22, center_y + 24), color, height=8, opacity=0.95),
             self._segment_between((center_x, center_y), (center_x - 30, center_y), color, height=8, opacity=0.95),
-            ft.Container(
-                left=center_x - 20,
-                top=center_y - 20,
-                width=40,
-                height=40,
-                bgcolor="#111111",
-                border=ft.Border.all(8, color),
-                border_radius=20,
-                opacity=0.95,
-            ),
         ]
 
     def _zone(self) -> ft.Control:
