@@ -222,6 +222,7 @@ class PositionSelector:
 class ScenarioPanel:
     def __init__(self) -> None:
         self._field = FieldDiagram()
+        self._strike_zone = StrikeZoneDiagram()
 
     def render(self, question: QuizQuestion) -> ft.Control:
         scenario = question.scenario
@@ -293,16 +294,24 @@ class ScenarioPanel:
                 ],
             )
         ]
-        controls.append(
-            self._field.render(
-                scenario.runners,
-                scenario.position,
-                scenario.runner_role,
-                scenario.rule_topic,
-                scenario.batted_ball,
-                scenario.fielding_note,
+        if scenario.rule_topic == RuleTopic.STRIKE_BALL:
+            controls.append(
+                self._strike_zone.render(
+                    scenario.batted_ball,
+                    scenario.fielding_note,
+                )
             )
-        )
+        else:
+            controls.append(
+                self._field.render(
+                    scenario.runners,
+                    scenario.position,
+                    scenario.runner_role,
+                    scenario.rule_topic,
+                    scenario.batted_ball,
+                    scenario.fielding_note,
+                )
+            )
 
         return ft.Container(
             bgcolor=theme.SURFACE,
@@ -341,6 +350,8 @@ class ScenarioPanel:
             return "これはフォース・タッチのルールです。場面を見て、どうアウトにするかをえらびます。"
         if scenario.rule_topic == RuleTopic.FAIR_FOUL:
             return "これはフェア・ファウルのルールです。ボールの場所を見て、どうなるかをえらびます。"
+        if scenario.rule_topic == RuleTopic.STRIKE_BALL:
+            return "これはストライク・ボールのルールです。ボールが通った場所を見て、どうなるかをえらびます。"
         if scenario.rule_topic == RuleTopic.GAME_FLOW:
             return "これはしあいの流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
         if scenario.rule_topic == RuleTopic.BASEBALL_DIFFERENCES:
@@ -553,12 +564,15 @@ class FieldDiagram:
             "ボールがなげられた",
             "ボールをとったあと",
             "ボールを持って",
+            "ボールを持った",
             "なげようとしている",
         )
         if not any(word in text for word in possession_words):
             return None
         if "ピッチャーのボールをとったあと" in text:
             return (160, 300)
+        if "守る人がボールを持って" in text or "守る人がボールを持った" in text:
+            return self._location_point(text) or (160, 140)
         return self._throw_source(text) or (
             self._position_point(active_position) if active_position is not None else None
         )
@@ -1103,6 +1117,188 @@ class FieldDiagram:
                 return "ボールの位置"
             return f"ボール: {state}"
         return f"{kind}: {state}"
+
+
+class StrikeZoneDiagram:
+    ZONE_LEFT = 132
+    ZONE_TOP = 94
+    ZONE_WIDTH = 88
+    ZONE_HEIGHT = 126
+
+    def render(self, pitch_text: str, note: str) -> ft.Control:
+        ball_point = self._pitch_point(pitch_text, note)
+        return ft.Container(
+            height=345,
+            bgcolor="#F4FAF3",
+            border=ft.Border.all(1, "#C8DDC4"),
+            border_radius=theme.CARD_RADIUS,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+            content=ft.Stack(
+                controls=[
+                    self._plate(),
+                    self._batter(),
+                    self._zone(),
+                    *self._pitch_path((160, 312), ball_point),
+                    self._ball_marker(ball_point),
+                    self._label(ball_point, pitch_text, note),
+                ],
+            ),
+        )
+
+    def _pitch_point(self, pitch_text: str, note: str) -> tuple[int, int]:
+        text = f"{pitch_text} {note}"
+        if "まん中" in text:
+            return (176, 154)
+        if "高" in text or "上" in text:
+            return (176, 74)
+        if "低" in text or "ワンバウンド" in text:
+            return (176, 248)
+        if "内側" in text:
+            return (106, 154)
+        if "外側" in text or "外れて" in text:
+            return (246, 154)
+        if "ファウル" in text:
+            return (208, 132)
+        return (176, 154)
+
+    def _plate(self) -> ft.Control:
+        return ft.Container(
+            left=133,
+            top=282,
+            width=54,
+            height=26,
+            bgcolor="#FFFFFF",
+            border=ft.Border.all(2, "#D8CBA7"),
+            border_radius=4,
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text("本るい", size=11, color=theme.TEXT_MUTED),
+        )
+
+    def _batter(self) -> ft.Control:
+        return ft.Container(
+            left=45,
+            top=118,
+            width=72,
+            height=122,
+            bgcolor="#FFFFFFCC",
+            border=ft.Border.all(2, theme.PRIMARY),
+            border_radius=8,
+            padding=ft.Padding(6, 6, 6, 6),
+            content=ft.Column(
+                spacing=4,
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Icon(ft.Icons.SPORTS_BASEBALL, size=24, color=theme.PRIMARY),
+                    ft.Text("バッター", size=12, weight=ft.FontWeight.BOLD, color=theme.TEXT),
+                    ft.Container(width=44, height=4, bgcolor="#9B6B43", rotate=-0.7, border_radius=2),
+                ],
+            ),
+        )
+
+    def _zone(self) -> ft.Control:
+        return ft.Container(
+            left=self.ZONE_LEFT,
+            top=self.ZONE_TOP,
+            width=self.ZONE_WIDTH,
+            height=self.ZONE_HEIGHT,
+            bgcolor="#FFFFFF55",
+            border=ft.Border.all(3, theme.SECONDARY),
+            border_radius=4,
+            alignment=ft.Alignment.TOP_CENTER,
+            content=ft.Text(
+                "ストライク\nゾーン",
+                size=12,
+                text_align=ft.TextAlign.CENTER,
+                color=theme.TEXT,
+                weight=ft.FontWeight.W_600,
+            ),
+        )
+
+    def _pitch_path(self, start: tuple[int, int], end: tuple[int, int]) -> list[ft.Control]:
+        return [
+            self._segment_between(start, end, "#E07A1F", height=4, opacity=0.75),
+            ft.Icon(
+                ft.Icons.ARROW_UPWARD,
+                left=end[0] - 10,
+                top=end[1] + 8,
+                size=20,
+                color="#E07A1F",
+                rotate=math.atan2(end[1] - start[1], end[0] - start[0]) + math.pi / 2,
+            ),
+        ]
+
+    def _segment_between(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        color: str,
+        *,
+        height: int,
+        opacity: float,
+    ) -> ft.Control:
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        length = max(20, math.hypot(dx, dy))
+        return ft.Container(
+            left=(start[0] + end[0]) / 2 - length / 2,
+            top=(start[1] + end[1]) / 2 - height / 2,
+            width=length,
+            height=height,
+            bgcolor=color,
+            opacity=opacity,
+            border_radius=height,
+            rotate=math.atan2(dy, dx),
+        )
+
+    def _ball_marker(self, point: tuple[int, int]) -> ft.Control:
+        return ft.Container(
+            left=point[0] - 10,
+            top=point[1] - 10,
+            width=20,
+            height=20,
+            bgcolor="#FFFDF7",
+            border=ft.Border.all(3, "#E07A1F"),
+            border_radius=10,
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text("●", size=8, color="#E07A1F"),
+        )
+
+    def _label(self, point: tuple[int, int], pitch_text: str, note: str) -> ft.Control:
+        zone_text = "ゾーン内" if self._inside_zone(point) else "ゾーン外"
+        if "ふって" in note or "空ぶり" in note:
+            detail = "ふった"
+        elif "ファウル" in pitch_text:
+            detail = "ファウル"
+        else:
+            detail = "見送った"
+        return ft.Container(
+            left=12,
+            top=12,
+            bgcolor="#FFFFFFDD",
+            border=ft.Border.all(1, "#E07A1F"),
+            border_radius=theme.CARD_RADIUS,
+            padding=ft.Padding(8, 5, 8, 5),
+            content=ft.Row(
+                spacing=6,
+                controls=[
+                    ft.Icon(ft.Icons.SPORTS_BASEBALL, size=14, color="#E07A1F"),
+                    ft.Text(
+                        f"投球: {zone_text} / {detail}",
+                        size=12,
+                        color=theme.TEXT,
+                        weight=ft.FontWeight.W_600,
+                    ),
+                ],
+            ),
+        )
+
+    def _inside_zone(self, point: tuple[int, int]) -> bool:
+        x, y = point
+        return (
+            self.ZONE_LEFT <= x <= self.ZONE_LEFT + self.ZONE_WIDTH
+            and self.ZONE_TOP <= y <= self.ZONE_TOP + self.ZONE_HEIGHT
+        )
 
 
 class QuestionPanel:

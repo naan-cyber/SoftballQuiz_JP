@@ -12,7 +12,7 @@ from softball_quiz.data import (
 )
 from softball_quiz.models import POSITION_ORDER, RULE_TOPIC_ORDER, RUNNER_ROLE_ORDER
 from softball_quiz.services import QuizEngine
-from softball_quiz.ui.components import FieldDiagram
+from softball_quiz.ui.components import FieldDiagram, StrikeZoneDiagram
 from softball_quiz.ui.kids_text import kids_text
 
 
@@ -46,6 +46,13 @@ class QuestionDataTest(unittest.TestCase):
         counts = question_counts_by_rule_topic()
         for topic in RULE_TOPIC_ORDER:
             self.assertGreaterEqual(counts[topic], 5, msg=topic.value)
+
+    def test_strike_ball_questions_use_strike_zone_points(self) -> None:
+        diagram = StrikeZoneDiagram()
+
+        self.assertTrue(diagram._inside_zone(diagram._pitch_point("投げたボールがストライクゾーンのまん中を通った", "")))
+        self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールがストライクゾーンの外側を通った", "")))
+        self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールが高めに外れた", "")))
 
     def test_filter_returns_only_selected_position(self) -> None:
         for position in POSITION_ORDER:
@@ -160,6 +167,25 @@ class QuestionDataTest(unittest.TestCase):
                 "ショートから1るいへボールがなげられた",
                 "バッターランナーが1るいへ走ってくる。",
                 None,
+            ),
+        )
+
+    def test_tag_between_bases_shows_ball_possession_not_runner_location(self) -> None:
+        diagram = FieldDiagram()
+        question = next(question for question in QUESTIONS if question.id == "rule-tag-between-bases")
+
+        self.assertIsNotNone(
+            diagram._possession_point(
+                f"{question.scenario.batted_ball} {question.scenario.fielding_note}",
+                question.scenario.position,
+            )
+        )
+        self.assertEqual(
+            "ボール: 守る人が持つ",
+            diagram.ball_summary(
+                question.scenario.batted_ball,
+                question.scenario.fielding_note,
+                question.scenario.position,
             ),
         )
 
