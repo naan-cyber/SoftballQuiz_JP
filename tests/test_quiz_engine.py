@@ -54,9 +54,12 @@ class QuestionDataTest(unittest.TestCase):
         self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールがストライクゾーンの外側を通った", "")))
         self.assertFalse(diagram._inside_zone(diagram._pitch_point("投げたボールが高めに外れた", "")))
         self.assertFalse(diagram._inside_zone(diagram._pitch_point("ボールが4つになった", "")))
-        self.assertNotEqual(
-            diagram._bat("投げたボールがストライクゾーンの外側を通った", "バッターはふらなかった。").rotate,
-            diagram._bat("投げたボールがストライクゾーンの外側を通った", "バッターがバットをふって、空ぶりした。").rotate,
+        self.assertFalse(diagram._is_swung("投げたボールがストライクゾーンの外側を通った", "バッターはふらなかった。"))
+        self.assertTrue(diagram._is_swung("投げたボールがストライクゾーンの外側を通った", "バッターがバットをふって、空ぶりした。"))
+        self.assertTrue(diagram._has_contact("投げたボールを打って、ファウルになった", ""))
+        self.assertGreater(
+            len(diagram._bat_controls("投げたボールを打って、ファウルになった", "", (210, 142))),
+            len(diagram._bat_controls("投げたボールがストライクゾーンの外側を通った", "バッターがバットをふって、空ぶりした。", (264, 176))),
         )
 
     def test_filter_returns_only_selected_position(self) -> None:

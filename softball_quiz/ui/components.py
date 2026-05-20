@@ -1137,7 +1137,7 @@ class StrikeZoneDiagram:
                 controls=[
                     self._title_bar(),
                     *self._home_lines(),
-                    self._bat(pitch_text, note),
+                    *self._bat_controls(pitch_text, note, ball_point),
                     self._plate(),
                     self._zone(),
                     self._ball_marker(ball_point),
@@ -1195,19 +1195,58 @@ class StrikeZoneDiagram:
             border_radius=3,
         )
 
+    def _bat_controls(
+        self,
+        pitch_text: str,
+        note: str,
+        ball_point: tuple[int, int],
+    ) -> list[ft.Control]:
+        controls: list[ft.Control] = []
+        if self._is_swung(pitch_text, note):
+            controls.extend(self._swing_marks())
+        controls.append(self._bat(pitch_text, note))
+        if self._has_contact(pitch_text, note):
+            controls.extend(self._contact_marks(ball_point))
+        return controls
+
     def _bat(self, pitch_text: str, note: str) -> ft.Control:
-        text = f"{pitch_text} {note}"
-        swung = "ふって" in text or "空ぶり" in text or "ファウル" in text or "打って" in text
+        swung = self._is_swung(pitch_text, note)
+        contact = self._has_contact(pitch_text, note)
         return ft.Container(
-            left=236 if swung else 274,
-            top=138 if swung else 70,
-            width=92,
+            left=220 if contact else 236 if swung else 274,
+            top=132 if contact else 138 if swung else 70,
+            width=104 if contact else 92,
             height=9,
             bgcolor="#9B6B43",
-            opacity=0.82,
+            opacity=0.86,
             border_radius=5,
-            rotate=0.18 if swung else -1.05,
+            rotate=-0.12 if contact else 0.18 if swung else -1.05,
         )
+
+    def _is_swung(self, pitch_text: str, note: str) -> bool:
+        text = f"{pitch_text} {note}"
+        return "ふって" in text or "空ぶり" in text or "ファウル" in text or "打って" in text or "打った" in text
+
+    def _has_contact(self, pitch_text: str, note: str) -> bool:
+        text = f"{pitch_text} {note}"
+        return "ファウル" in text or "打って" in text or "打った" in text
+
+    def _swing_marks(self) -> list[ft.Control]:
+        return [
+            self._segment_between((235, 130), (292, 104), "#C9B28E", height=3, opacity=0.52),
+            self._segment_between((232, 158), (300, 148), "#C9B28E", height=3, opacity=0.52),
+            self._segment_between((244, 184), (306, 198), "#C9B28E", height=3, opacity=0.42),
+        ]
+
+    def _contact_marks(self, point: tuple[int, int]) -> list[ft.Control]:
+        color = "#D64545"
+        x, y = point
+        return [
+            self._segment_between((x - 18, y), (x + 18, y), color, height=3, opacity=0.9),
+            self._segment_between((x, y - 18), (x, y + 18), color, height=3, opacity=0.9),
+            self._segment_between((x - 13, y - 13), (x + 13, y + 13), color, height=3, opacity=0.9),
+            self._segment_between((x - 13, y + 13), (x + 13, y - 13), color, height=3, opacity=0.9),
+        ]
 
     def _zone(self) -> ft.Control:
         return ft.Container(
