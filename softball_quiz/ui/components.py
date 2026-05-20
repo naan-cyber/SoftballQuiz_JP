@@ -1140,9 +1140,9 @@ class StrikeZoneDiagram:
             content=ft.Stack(
                 controls=[
                     self._title_bar(),
-                    self._home_lines(),
-                    self._catcher_silhouette(),
-                    self._batter_silhouette(),
+                    *self._home_lines(),
+                    *self._catcher_silhouette(),
+                    *self._batter_silhouette(),
                     self._plate(),
                     *self._grid_lines(),
                     self._zone(),
