@@ -13,6 +13,9 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 env:
   UV_PYTHON: "3.12"
   PYTHONUTF8: "1"
@@ -39,7 +42,7 @@ jobs:
           cp -R softball_quiz .pages-app/
           find .pages-app -type d -name __pycache__ -prune -exec rm -rf {} +
 
-          FLET_VERSION="$(uv run python -c 'import flet; print(flet.__version__)')"
+          FLET_VERSION="$(uv run --locked python -c 'import flet; print(flet.__version__)')"
           cat > .pages-app/pyproject.toml <<EOF
           [project]
           name = "softball-next-play-quiz"
@@ -48,7 +51,9 @@ jobs:
           dependencies = ["flet==${FLET_VERSION}"]
           EOF
 
-          uv run flet publish .pages-app/main.py --distpath "$PWD/build/web" --base-url "${GITHUB_REPOSITORY#*/}" --route-url-strategy hash
+          uv run --locked flet publish .pages-app/main.py --distpath "$PWD/build/web" --base-url "${GITHUB_REPOSITORY#*/}" --route-url-strategy hash
+          cp robots.txt build/web/robots.txt
+          find build/web -type f \( -name "*.map" -o -name "*.symbols" \) -delete
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

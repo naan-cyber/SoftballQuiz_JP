@@ -900,7 +900,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "flet", extras = ["cli", "web"], specifier = ">=0.28.0" }]
+requires-dist = [{ name = "flet", extras = ["cli", "web"], specifier = "==0.85.1" }]
 
 [[package]]
 name = "starlette"

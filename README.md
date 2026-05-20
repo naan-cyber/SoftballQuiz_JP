@@ -5,7 +5,7 @@
 ## 起動
 
 ```bash
-uv run flet run
+uv run --locked flet run
 ```
 
 または依存関係を入れた環境で:
@@ -44,7 +44,7 @@ mkdir -p .pages-app
 cp main.py .pages-app/
 cp -R softball_quiz .pages-app/
 find .pages-app -type d -name __pycache__ -prune -exec rm -rf {} +
-FLET_VERSION="$(uv run python -c 'import flet; print(flet.__version__)')"
+FLET_VERSION="$(uv run --locked python -c 'import flet; print(flet.__version__)')"
 cat > .pages-app/pyproject.toml <<EOF
 [project]
 name = "softball-next-play-quiz"
@@ -52,8 +52,20 @@ version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = ["flet==${FLET_VERSION}"]
 EOF
-uv run flet publish .pages-app/main.py --distpath "$PWD/build/web" --base-url SoftballQuiz_JP --route-url-strategy hash
+uv run --locked flet publish .pages-app/main.py --distpath "$PWD/build/web" --base-url SoftballQuiz_JP --route-url-strategy hash
+cp robots.txt build/web/robots.txt
+find build/web -type f \( -name "*.map" -o -name "*.symbols" \) -delete
 ```
+
+## 公開前のセキュリティ
+
+- GitHub Actions は必要な権限だけを使い、`uv.lock` と一致しない依存関係ではビルドしないようにしています。
+- 公開用ビルドから、デバッグ用の source map と symbols ファイルを削除します。
+- 公開用ビルドに、クローラーへ全ページのクロール拒否を伝える `robots.txt` を含めます。
+- 依存関係と GitHub Actions の更新は Dependabot で確認します。
+- 依存関係の既知のぜい弱性は `Security Checks` ワークフローで確認します。
+- `.env` や鍵ファイルは、誤ってコミットしにくいよう `.gitignore` に入れています。
+- このアプリは、名前・メールアドレスなどの個人情報を入力させず、クイズ結果も外部へ送信しません。
 
 ## 構成
 
