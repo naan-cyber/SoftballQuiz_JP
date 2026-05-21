@@ -1225,12 +1225,28 @@ class StrikeZoneDiagram:
             barrel_end = (314, 128)
             handle_end = (342, 184)
 
+        handle_start = self._overlap_point(barrel_end, handle_end, overlap=12)
         knob_start, knob_end = self._knob_points(barrel_end, handle_end)
         return [
+            self._segment_between(handle_start, handle_end, "#111111", height=8, opacity=0.9),
             self._segment_between(barrel_start, barrel_end, "#111111", height=24, opacity=0.9),
-            self._segment_between(barrel_end, handle_end, "#111111", height=8, opacity=0.9),
             self._segment_between(knob_start, knob_end, "#111111", height=7, opacity=0.9),
         ]
+
+    def _overlap_point(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        *,
+        overlap: int,
+    ) -> tuple[int, int]:
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        length = max(1, math.hypot(dx, dy))
+        return (
+            round(start[0] - dx / length * overlap),
+            round(start[1] - dy / length * overlap),
+        )
 
     def _knob_points(
         self,
