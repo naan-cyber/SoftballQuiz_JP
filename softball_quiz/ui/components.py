@@ -1213,53 +1213,39 @@ class StrikeZoneDiagram:
         swung = self._is_swung(pitch_text, note)
         contact = self._has_contact(pitch_text, note)
         if contact:
-            barrel_left, barrel_top = 200, 128
-            handle_left, handle_top = 282, 144
-            knob_left, knob_top = 338, 136
-            rotate = 0.06
+            barrel_start = (188, 143)
+            barrel_end = (282, 148)
+            handle_end = (350, 151)
         elif swung:
-            barrel_left, barrel_top = 218, 132
-            handle_left, handle_top = 300, 148
-            knob_left, knob_top = 338, 140
-            rotate = 0.12
+            barrel_start = (218, 145)
+            barrel_end = (296, 154)
+            handle_end = (350, 160)
         else:
-            barrel_left, barrel_top = 276, 72
-            handle_left, handle_top = 262, 137
-            knob_left, knob_top = 269, 158
-            rotate = -1.05
+            barrel_start = (286, 76)
+            barrel_end = (314, 128)
+            handle_end = (342, 184)
 
+        knob_start, knob_end = self._knob_points(barrel_end, handle_end)
         return [
-            ft.Container(
-                left=barrel_left,
-                top=barrel_top,
-                width=94,
-                height=36,
-                bgcolor="#111111",
-                opacity=0.88,
-                border_radius=18,
-                rotate=rotate,
-            ),
-            ft.Container(
-                left=handle_left,
-                top=handle_top,
-                width=62,
-                height=10,
-                bgcolor="#111111",
-                opacity=0.88,
-                border_radius=5,
-                rotate=rotate,
-            ),
-            ft.Container(
-                left=knob_left,
-                top=knob_top,
-                width=18,
-                height=26,
-                bgcolor="#111111",
-                opacity=0.88,
-                border_radius=9,
-                rotate=rotate,
-            ),
+            self._segment_between(barrel_start, barrel_end, "#111111", height=24, opacity=0.9),
+            self._segment_between(barrel_end, handle_end, "#111111", height=8, opacity=0.9),
+            self._segment_between(knob_start, knob_end, "#111111", height=7, opacity=0.9),
         ]
+
+    def _knob_points(
+        self,
+        handle_start: tuple[int, int],
+        handle_end: tuple[int, int],
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        dx = handle_end[0] - handle_start[0]
+        dy = handle_end[1] - handle_start[1]
+        length = max(1, math.hypot(dx, dy))
+        normal = (-dy / length, dx / length)
+        half = 11
+        return (
+            (round(handle_end[0] - normal[0] * half), round(handle_end[1] - normal[1] * half)),
+            (round(handle_end[0] + normal[0] * half), round(handle_end[1] + normal[1] * half)),
+        )
 
     def _is_swung(self, pitch_text: str, note: str) -> bool:
         text = f"{pitch_text} {note}"
@@ -1315,18 +1301,20 @@ class StrikeZoneDiagram:
 
     def _contact_marks(self, point: tuple[int, int]) -> list[ft.Control]:
         color = "#F2B84B"
-        x, y = point
-        center_x = x - 8
-        center_y = y + 2
+        center_x, center_y = point
+        points: list[tuple[int, int]] = []
+        for index in range(14):
+            angle = -math.pi / 2 + index * (math.pi * 2 / 14)
+            radius = 27 if index % 2 == 0 else 18
+            points.append(
+                (
+                    round(center_x + math.cos(angle) * radius),
+                    round(center_y + math.sin(angle) * radius),
+                )
+            )
         return [
-            self._segment_between((center_x, center_y), (center_x - 22, center_y - 24), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x, center_y - 34), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x + 22, center_y - 24), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x + 30, center_y), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x + 20, center_y + 24), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x, center_y + 34), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x - 22, center_y + 24), color, height=8, opacity=0.95),
-            self._segment_between((center_x, center_y), (center_x - 30, center_y), color, height=8, opacity=0.95),
+            self._segment_between(start, end, color, height=2, opacity=0.95, min_length=1)
+            for start, end in zip(points, points[1:] + points[:1])
         ]
 
     def _zone(self) -> ft.Control:
@@ -1360,10 +1348,11 @@ class StrikeZoneDiagram:
         *,
         height: int,
         opacity: float,
+        min_length: float = 20,
     ) -> ft.Control:
         dx = end[0] - start[0]
         dy = end[1] - start[1]
-        length = max(20, math.hypot(dx, dy))
+        length = max(min_length, math.hypot(dx, dy))
         return ft.Container(
             left=(start[0] + end[0]) / 2 - length / 2,
             top=(start[1] + end[1]) / 2 - height / 2,
@@ -1376,16 +1365,12 @@ class StrikeZoneDiagram:
         )
 
     def _ball_marker(self, point: tuple[int, int]) -> ft.Control:
-        return ft.Container(
-            left=point[0] - 10,
-            top=point[1] - 10,
-            width=20,
-            height=20,
-            bgcolor="#FFFDF7",
-            border=ft.Border.all(3, "#E07A1F"),
-            border_radius=10,
-            alignment=ft.Alignment.CENTER,
-            content=ft.Text("●", size=8, color="#E07A1F"),
+        return ft.Icon(
+            ft.Icons.SPORTS_BASEBALL,
+            left=point[0] - 11,
+            top=point[1] - 11,
+            size=22,
+            color="#E07A1F",
         )
 
     def _label(self, point: tuple[int, int], pitch_text: str, note: str) -> ft.Control:
