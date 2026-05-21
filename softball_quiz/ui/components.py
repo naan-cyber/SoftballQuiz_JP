@@ -90,6 +90,19 @@ class HeaderBar:
         )
 
 
+class FooterBar:
+    def render(self) -> ft.Control:
+        return ft.Container(
+            padding=ft.Padding(0, 4, 0, 0),
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text(
+                "©︎ 2026 Naan.",
+                size=12,
+                color=theme.TEXT_MUTED,
+            ),
+        )
+
+
 class PositionSelector:
     def render(
         self,

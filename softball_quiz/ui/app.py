@@ -15,6 +15,7 @@ from softball_quiz.services import QuizEngine
 from softball_quiz.ui import theme
 from softball_quiz.ui.components import (
     FeedbackPanel,
+    FooterBar,
     HeaderBar,
     NavigationBar,
     PositionSelector,
@@ -38,6 +39,7 @@ class SoftballQuizApp:
         self.feedback_panel = FeedbackPanel()
         self.navigation = NavigationBar()
         self.result_panel = ResultPanel()
+        self.footer = FooterBar()
         self.show_result = False
 
     def start(self) -> None:
@@ -84,6 +86,7 @@ class SoftballQuizApp:
                                 on_select_rule_topic=self._select_rule_topic,
                             ),
                             self._render_body(),
+                            self.footer.render(),
                         ],
                     ),
                 )
