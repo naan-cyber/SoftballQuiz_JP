@@ -6,7 +6,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
-    "flet[cli,web]==0.85.1",
+    "flet[cli,web]==0.85.2",
 ]
 
 [tool.pytest.ini_options]
