@@ -37,6 +37,15 @@ class QuestionDataTest(unittest.TestCase):
         for position in POSITION_ORDER:
             self.assertGreaterEqual(counts[position], 11, msg=position.value)
 
+    def test_each_position_has_after_return_questions(self) -> None:
+        for position in POSITION_ORDER:
+            after_return_questions = [
+                question
+                for question in questions_for_position(position)
+                if "-after-return-" in question.id
+            ]
+            self.assertGreaterEqual(len(after_return_questions), 3, msg=position.value)
+
     def test_each_runner_role_has_questions(self) -> None:
         counts = question_counts_by_runner_role()
         for role in RUNNER_ROLE_ORDER:

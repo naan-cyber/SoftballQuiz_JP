@@ -4,6 +4,7 @@ from collections import Counter
 
 from softball_quiz.data.battery_questions import CATCHER_QUESTIONS, PITCHER_QUESTIONS
 from softball_quiz.data.defense_extra_questions import DEFENSE_EXTRA_QUESTIONS
+from softball_quiz.data.defense_return_questions import DEFENSE_RETURN_QUESTIONS
 from softball_quiz.data.infield_questions import INFIELD_QUESTIONS
 from softball_quiz.data.outfield_questions import OUTFIELD_QUESTIONS
 from softball_quiz.data.rule_questions import RULE_QUESTIONS
@@ -25,6 +26,7 @@ QUESTIONS: tuple[QuizQuestion, ...] = (
     *INFIELD_QUESTIONS,
     *OUTFIELD_QUESTIONS,
     *DEFENSE_EXTRA_QUESTIONS,
+    *DEFENSE_RETURN_QUESTIONS,
     *RUNNER_QUESTIONS,
     *RULE_QUESTIONS,
 )
