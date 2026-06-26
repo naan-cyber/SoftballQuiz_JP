@@ -1,0 +1,176 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum
+
+
+class Difficulty(str, Enum):
+    BASIC = "やさしい"
+    INTERMEDIATE = "ちょいむず"
+
+
+class DefensivePosition(str, Enum):
+    PITCHER = "pitcher"
+    CATCHER = "catcher"
+    FIRST_BASE = "first_base"
+    SECOND_BASE = "second_base"
+    THIRD_BASE = "third_base"
+    SHORTSTOP = "shortstop"
+    LEFT_FIELD = "left_field"
+    CENTER_FIELD = "center_field"
+    RIGHT_FIELD = "right_field"
+
+    @property
+    def label(self) -> str:
+        return {
+            DefensivePosition.PITCHER: "ピッチャー",
+            DefensivePosition.CATCHER: "キャッチャー",
+            DefensivePosition.FIRST_BASE: "ファースト",
+            DefensivePosition.SECOND_BASE: "セカンド",
+            DefensivePosition.THIRD_BASE: "サード",
+            DefensivePosition.SHORTSTOP: "ショート",
+            DefensivePosition.LEFT_FIELD: "レフト",
+            DefensivePosition.CENTER_FIELD: "センター",
+            DefensivePosition.RIGHT_FIELD: "ライト",
+        }[self]
+
+
+POSITION_ORDER: tuple[DefensivePosition, ...] = (
+    DefensivePosition.PITCHER,
+    DefensivePosition.CATCHER,
+    DefensivePosition.FIRST_BASE,
+    DefensivePosition.SECOND_BASE,
+    DefensivePosition.THIRD_BASE,
+    DefensivePosition.SHORTSTOP,
+    DefensivePosition.LEFT_FIELD,
+    DefensivePosition.CENTER_FIELD,
+    DefensivePosition.RIGHT_FIELD,
+)
+
+
+class RunnerRole(str, Enum):
+    BATTER_RUNNER = "batter_runner"
+    FIRST_RUNNER = "first_runner"
+    SECOND_RUNNER = "second_runner"
+    THIRD_RUNNER = "third_runner"
+
+    @property
+    def label(self) -> str:
+        return {
+            RunnerRole.BATTER_RUNNER: "バッターランナー",
+            RunnerRole.FIRST_RUNNER: "1るいランナー",
+            RunnerRole.SECOND_RUNNER: "2るいランナー",
+            RunnerRole.THIRD_RUNNER: "3るいランナー",
+        }[self]
+
+
+RUNNER_ROLE_ORDER: tuple[RunnerRole, ...] = (
+    RunnerRole.BATTER_RUNNER,
+    RunnerRole.FIRST_RUNNER,
+    RunnerRole.SECOND_RUNNER,
+    RunnerRole.THIRD_RUNNER,
+)
+
+
+class RuleTopic(str, Enum):
+    OUTS = "outs"
+    FORCE_TAG = "force_tag"
+    FAIR_FOUL = "fair_foul"
+    STRIKE_BALL = "strike_ball"
+    GAME_FLOW = "game_flow"
+    BASEBALL_DIFFERENCES = "baseball_differences"
+
+    @property
+    def label(self) -> str:
+        return {
+            RuleTopic.OUTS: "アウト",
+            RuleTopic.FORCE_TAG: "フォース・タッチ",
+            RuleTopic.FAIR_FOUL: "フェア・ファウル",
+            RuleTopic.STRIKE_BALL: "ストライク・ボール",
+            RuleTopic.GAME_FLOW: "試合の流れ",
+            RuleTopic.BASEBALL_DIFFERENCES: "野球とのちがい",
+        }[self]
+
+
+RULE_TOPIC_ORDER: tuple[RuleTopic, ...] = (
+    RuleTopic.OUTS,
+    RuleTopic.FORCE_TAG,
+    RuleTopic.FAIR_FOUL,
+    RuleTopic.STRIKE_BALL,
+    RuleTopic.GAME_FLOW,
+    RuleTopic.BASEBALL_DIFFERENCES,
+)
+
+
+@dataclass(frozen=True)
+class RunnerState:
+    first: bool = False
+    second: bool = False
+    third: bool = False
+
+    @property
+    def occupied_bases(self) -> tuple[str, ...]:
+        bases: list[str] = []
+        if self.first:
+            bases.append("1るい")
+        if self.second:
+            bases.append("2るい")
+        if self.third:
+            bases.append("3るい")
+        return tuple(bases)
+
+    @property
+    def label(self) -> str:
+        if not self.occupied_bases:
+            return "ランナーなし"
+        return "・".join(self.occupied_bases)
+
+
+@dataclass(frozen=True)
+class Scenario:
+    outs: int
+    runners: RunnerState
+    batted_ball: str
+    fielding_note: str
+    position: DefensivePosition | None = None
+    runner_role: RunnerRole | None = None
+    rule_topic: RuleTopic | None = None
+    difficulty: Difficulty = Difficulty.BASIC
+
+    @property
+    def outs_label(self) -> str:
+        return f"{self.outs}アウト"
+
+    @property
+    def actor_label(self) -> str:
+        if self.position is not None:
+            return self.position.label
+        if self.runner_role is not None:
+            return self.runner_role.label
+        if self.rule_topic is not None:
+            return self.rule_topic.label
+        return "ぜんぶ"
+
+
+@dataclass(frozen=True)
+class AnswerOption:
+    id: str
+    text: str
+    is_correct: bool
+    feedback: str
+
+
+@dataclass(frozen=True)
+class QuizQuestion:
+    id: str
+    scenario: Scenario
+    prompt: str
+    options: tuple[AnswerOption, ...]
+    principle: str
+
+    @property
+    def correct_option(self) -> AnswerOption:
+        correct = [option for option in self.options if option.is_correct]
+        if len(correct) != 1:
+            raise ValueError(f"Question {self.id} must have exactly one correct option.")
+        return correct[0]

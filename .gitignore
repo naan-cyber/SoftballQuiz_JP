@@ -1,0 +1,16 @@
+build/
+.pages-app/
+.flet/
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.pdf
+softball_quiz_presentation.md
+presentation_assets/
