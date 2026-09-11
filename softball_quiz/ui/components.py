@@ -366,7 +366,7 @@ class ScenarioPanel:
         if scenario.rule_topic == RuleTopic.STRIKE_BALL:
             return "これはストライク・ボールのルールです。ボールが通った場所を見て、どうなるかをえらびます。"
         if scenario.rule_topic == RuleTopic.GAME_FLOW:
-            return "これはしあいの流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
+            return "これは試合の流れのルールです。始まり・交代・終わりで何をするかをえらびます。"
         if scenario.rule_topic == RuleTopic.BASEBALL_DIFFERENCES:
             return "これは野球とソフトボールのちがいです。ソフトボールで正しいきまりをえらびます。"
         return "これはきほんルールです。場面を見て、正しい決まりをえらびます。"
@@ -584,6 +584,8 @@ class FieldDiagram:
             return None
         if "ピッチャーのボールをとったあと" in text:
             return (160, 300)
+        if "本るいへボールが返ってきた" in text:
+            return (160, 300)
         if "守る人がボールを持って" in text or "守る人がボールを持った" in text:
             return self._location_point(text) or (160, 140)
         return self._throw_source(text) or (
@@ -624,6 +626,7 @@ class FieldDiagram:
             "バウンド",
             "ファウル",
             "フェア",
+            "落ちた",
         )
         return not any(word in text for word in ball_words)
 
@@ -764,6 +767,7 @@ class FieldDiagram:
         checks: tuple[tuple[tuple[str, ...], tuple[int, int]], ...] = (
             (("キャッチャーの後ろ",), (160, 325)),
             (("本るい前",), (160, 238)),
+            (("ストライクが地面に落ちた",), (160, 300)),
             (("キャッチャー",), (160, 300)),
             (("ピッチャーの近く",), (160, 166)),
             (("ピッチャーと",), (188, 182)),
@@ -826,6 +830,7 @@ class FieldDiagram:
             or "ファウルラインの外" in text
             or "ファウルの場所" in text
             or "ファウルボール" in text
+            or "ファウルフライ" in text
         )
         if not is_foul_area:
             return None

@@ -98,7 +98,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         outs=1,
         runners=RunnerState(first=True),
         ball="1るい側のファウルフライ",
-        note="ファーストも追っている。キャッチャーから見える高さ。",
+        note="ファーストも追っている。キャッチャーがとれる高さ。",
         options=(
             ("声を出し、とれる人がキャッチする", True, "ファウルフライも、地面につく前にとればアウトです。"),
             ("ファウルなので必ず見送る", False, "とれるファウルフライはアウトにできます。"),
@@ -270,7 +270,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         position=DefensivePosition.SECOND_BASE,
         outs=1,
         runners=RunnerState(second=True),
-        ball="2るいベース後ろの小さいフライ",
+        ball="2るいベースの後ろの小さいフライ",
         note="ライトとセンターも前へ来る。",
         options=(
             ("声を出し、とれるなら自分でとる", True, "内野と外野の間は、声を出して安全にとります。"),
@@ -407,7 +407,6 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
             ("ライトへ下がる", False, "3るいのプレーに入ります。"),
         ),
         point="とうるいでは、サインで決めた人が先にベースへ入ります。",
-        difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
         question_id="shortstop-cutoff-center-home",

@@ -82,7 +82,7 @@ LEFT_FIELD_QUESTIONS: tuple[QuizQuestion, ...] = (
         position=DefensivePosition.LEFT_FIELD,
         outs=0,
         runners=RunnerState(first=True),
-        ball="レフト前に落ちるヒット",
+        ball="レフト前に転がるヒット",
         note="1るいランナーが2るいをまわるかもしれない。",
         options=(
             ("体の前で止めて、3るい方向へ早く返す", True, "後ろにそらすとランナーが大きく進みます。まず前で止めます。"),
@@ -228,7 +228,6 @@ RIGHT_FIELD_QUESTIONS: tuple[QuizQuestion, ...] = (
             ("ボールを持って止まる", False, "返すのが遅いと、次のるいへ進まれます。"),
         ),
         point="ライト前ヒットは、1るいランナーの3るい進るいを考え、3るい側のカットマンへ返します。",
-        difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
         question_id="right-field-fly-runner-third",

@@ -114,7 +114,7 @@ SECOND_BASE_QUESTIONS: tuple[QuizQuestion, ...] = (
         position=DefensivePosition.SECOND_BASE,
         outs=0,
         runners=RunnerState(first=True),
-        ball="2るいベースよりのゴロ",
+        ball="2るいベース寄りのゴロ",
         note="ショートが2るいに入った。",
         options=(
             ("2るいへなげてフォースアウトをとる", True, "1るいランナーは2るいへ行く必要があります。近いアウトからねらいます。"),
@@ -135,7 +135,7 @@ SECOND_BASE_QUESTIONS: tuple[QuizQuestion, ...] = (
             ("2るいへなげる", False, "2るいにアウトにするランナーはいません。"),
             ("外野へなげる", False, "まず本るいか1るいを考えます。"),
         ),
-        point="前進守びでは、本るいへ走るランナーを止めるねらいがあります。",
+        point="前進守備では、本るいへ走るランナーを止めるねらいがあります。",
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
@@ -261,7 +261,7 @@ THIRD_BASE_QUESTIONS: tuple[QuizQuestion, ...] = (
         position=DefensivePosition.THIRD_BASE,
         outs=1,
         runners=RunnerState(third=True),
-        ball="3るい横のファウルフライ",
+        ball="3るいの横のファウルフライ",
         note="とれそうな高さ。3るいランナーは本るいをねらえる。",
         options=(
             ("まずキャッチし、本るいへなげられる体の向きを作る", True, "フライをとるとアウトがひとつ増えます。とったあとは本るいを見ます。"),
