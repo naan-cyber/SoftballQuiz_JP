@@ -5,6 +5,7 @@ from collections.abc import Callable
 
 import flet as ft
 
+from softball_quiz import __version__
 from softball_quiz.models import (
     AnswerOption,
     DefensivePosition,
@@ -96,7 +97,7 @@ class FooterBar:
             padding=ft.Padding(0, 4, 0, 0),
             alignment=ft.Alignment.CENTER,
             content=ft.Text(
-                "©︎ 2026 Naan.",
+                f"©︎ 2026 Naan.  v{__version__}",
                 size=12,
                 color=theme.TEXT_MUTED,
             ),

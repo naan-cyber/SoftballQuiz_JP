@@ -1,6 +1,9 @@
 import random
+import re
 import unittest
+from pathlib import Path
 
+from softball_quiz import __version__
 from softball_quiz.data import (
     QUESTIONS,
     question_counts_by_position,
@@ -33,6 +36,12 @@ class QuestionDataTest(unittest.TestCase):
     def test_question_ids_are_digit_strings(self) -> None:
         for question in QUESTIONS:
             self.assertTrue(question.id.isdigit(), msg=question.id)
+
+    def test_app_version_matches_pyproject(self) -> None:
+        pyproject = (Path(__file__).resolve().parent.parent / "pyproject.toml").read_text(encoding="utf-8")
+        match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE)
+        self.assertIsNotNone(match)
+        self.assertEqual(match.group(1), __version__)
 
     def test_question_bank_has_enough_variation(self) -> None:
         self.assertGreaterEqual(len(QUESTIONS), 55)
