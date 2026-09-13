@@ -6,7 +6,7 @@ from softball_quiz.models import DefensivePosition, Difficulty, QuizQuestion, Ru
 
 DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="pitcher-after-return-first-home-ready",
+        question_id="2401",
         position=DefensivePosition.PITCHER,
         outs=1,
         runners=RunnerState(third=True),
@@ -21,7 +21,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-after-return-third-stay-ready",
+        question_id="2402",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(first=True, second=True),
@@ -36,7 +36,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-after-return-second-home-ready",
+        question_id="2403",
         position=DefensivePosition.PITCHER,
         outs=1,
         runners=RunnerState(first=True, third=True),
@@ -51,7 +51,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-after-return-third-home-stay",
+        question_id="2404",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(first=True, third=True),
@@ -66,7 +66,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-after-return-second-home-ready",
+        question_id="2405",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(second=True, third=True),
@@ -81,7 +81,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-after-return-first-call",
+        question_id="2406",
         position=DefensivePosition.CATCHER,
         outs=2,
         runners=RunnerState(first=True, third=True),
@@ -96,7 +96,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-after-return-second-bag",
+        question_id="2407",
         position=DefensivePosition.FIRST_BASE,
         outs=0,
         runners=RunnerState(first=True),
@@ -111,7 +111,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-after-return-third-bag",
+        question_id="2408",
         position=DefensivePosition.FIRST_BASE,
         outs=1,
         runners=RunnerState(first=True, second=True),
@@ -126,7 +126,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-after-return-home-bag",
+        question_id="2409",
         position=DefensivePosition.FIRST_BASE,
         outs=1,
         runners=RunnerState(second=True),
@@ -141,7 +141,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="second-base-after-return-first-second",
+        question_id="2410",
         position=DefensivePosition.SECOND_BASE,
         outs=0,
         runners=RunnerState(first=True),
@@ -156,7 +156,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="second-base-after-return-third-second",
+        question_id="2411",
         position=DefensivePosition.SECOND_BASE,
         outs=1,
         runners=RunnerState(first=True, second=True),
@@ -171,7 +171,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="second-base-after-return-home-second",
+        question_id="2412",
         position=DefensivePosition.SECOND_BASE,
         outs=2,
         runners=RunnerState(first=True, second=True),
@@ -186,7 +186,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="third-base-after-return-first-third",
+        question_id="2413",
         position=DefensivePosition.THIRD_BASE,
         outs=0,
         runners=RunnerState(second=True),
@@ -201,7 +201,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="third-base-after-return-second-third",
+        question_id="2414",
         position=DefensivePosition.THIRD_BASE,
         outs=1,
         runners=RunnerState(second=True),
@@ -216,7 +216,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="third-base-after-return-home-third",
+        question_id="2415",
         position=DefensivePosition.THIRD_BASE,
         outs=2,
         runners=RunnerState(second=True, third=True),
@@ -231,7 +231,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="shortstop-after-return-first-second",
+        question_id="2416",
         position=DefensivePosition.SHORTSTOP,
         outs=0,
         runners=RunnerState(first=True),
@@ -246,7 +246,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="shortstop-after-return-third-second",
+        question_id="2417",
         position=DefensivePosition.SHORTSTOP,
         outs=1,
         runners=RunnerState(first=True, second=True),
@@ -261,7 +261,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="shortstop-after-return-home-second",
+        question_id="2418",
         position=DefensivePosition.SHORTSTOP,
         outs=2,
         runners=RunnerState(first=True, second=True),
@@ -276,7 +276,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="left-field-after-return-third-stay",
+        question_id="2419",
         position=DefensivePosition.LEFT_FIELD,
         outs=0,
         runners=RunnerState(first=True, second=True),
@@ -291,7 +291,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="left-field-after-return-home-third",
+        question_id="2420",
         position=DefensivePosition.LEFT_FIELD,
         outs=1,
         runners=RunnerState(first=True, third=True),
@@ -306,7 +306,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="left-field-after-return-second-back",
+        question_id="2421",
         position=DefensivePosition.LEFT_FIELD,
         outs=2,
         runners=RunnerState(first=True),
@@ -321,7 +321,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="center-field-after-return-second-back",
+        question_id="2422",
         position=DefensivePosition.CENTER_FIELD,
         outs=0,
         runners=RunnerState(first=True),
@@ -336,7 +336,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="center-field-after-return-home-middle",
+        question_id="2423",
         position=DefensivePosition.CENTER_FIELD,
         outs=1,
         runners=RunnerState(first=True, second=True),
@@ -351,7 +351,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="center-field-after-return-third-left",
+        question_id="2424",
         position=DefensivePosition.CENTER_FIELD,
         outs=2,
         runners=RunnerState(first=True, second=True),
@@ -366,7 +366,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="right-field-after-return-first-back",
+        question_id="2425",
         position=DefensivePosition.RIGHT_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -381,7 +381,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="right-field-after-return-second-back",
+        question_id="2426",
         position=DefensivePosition.RIGHT_FIELD,
         outs=1,
         runners=RunnerState(first=True),
@@ -396,7 +396,7 @@ DEFENSE_RETURN_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="right-field-after-return-home-first",
+        question_id="2427",
         position=DefensivePosition.RIGHT_FIELD,
         outs=2,
         runners=RunnerState(first=True, second=True),

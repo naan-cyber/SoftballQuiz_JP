@@ -6,7 +6,7 @@ from softball_quiz.models import Difficulty, QuizQuestion, RunnerRole, RunnerSta
 
 BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="br-grounder-run-through-first",
+        question_id="3001",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(),
@@ -20,7 +20,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ゴロを打ったら、まず1るいまで全力で走ります。",
     ),
     make_question(
-        question_id="br-overrun-return",
+        question_id="3002",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(),
@@ -34,7 +34,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="1るいを走りぬけたら、すぐベースへ戻るのがきほんです。",
     ),
     make_question(
-        question_id="br-single-round-first",
+        question_id="3003",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(),
@@ -48,7 +48,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ヒットでは、1るいを回って次のるいをねらえる形を作ります。",
     ),
     make_question(
-        question_id="br-fly-ball-run",
+        question_id="3004",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(),
@@ -62,7 +62,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="打ったら、アウトと決まるまで走るのがきほんです。",
     ),
     make_question(
-        question_id="br-extra-base-gap",
+        question_id="3005",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=1,
         runners=RunnerState(),
@@ -77,7 +77,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="rule-run-bases-in-order",
+        question_id="3006",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(),
@@ -92,7 +92,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ランナーは、1るい、2るい、3るい、本るいの順にふみます。",
     ),
     make_question(
-        question_id="rule-pass-runner",
+        question_id="3007",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(first=True),
@@ -108,7 +108,7 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="br-walk-watch-ball",
+        question_id="3008",
         runner_role=RunnerRole.BATTER_RUNNER,
         outs=0,
         runners=RunnerState(third=True),
@@ -121,12 +121,83 @@ BATTER_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="出るいしたあとも、ボールとコーチを見るくせをつけます。",
     ),
+    make_question(
+        question_id="3029",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(),
+        ball="ライト前ヒットを打ち、1るいを小さく回った",
+        note="ピッチャーがボールを持って円の中に入り、コーチは「戻れ」のサイン。",
+        options=(
+            ("止まらず、すぐ1るいへ戻る", True, "円の中のピッチャーがボールを持った時、るいを離れていたら、すぐ戻るか次へ進むかを決めて動き続けます。"),
+            ("1るいと2るいの間で止まる", False, "るいの間で止まると、ルックバックルールでアウトになることがあります。"),
+            ("2るいへ少し進んでから1るいへ戻る", False, "進むと決めたあとに向きを変えると、アウトになることがあります。"),
+        ),
+        point="ピッチャーが円の中でボールを持ったら、るいを離れているランナーは、戻るか進むかをすぐ決めて一気に動きます。大会ルールでも確認します。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3030",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=1,
+        runners=RunnerState(),
+        ball="レフト前ヒットを打ち、1るいを回った",
+        note="ボールはまだ外野にあり、コーチが2るいへ進めのサインを出している。",
+        options=(
+            ("ボールとコーチを見て、2るいへ走る", True, "ボールがまだピッチャーへ戻る前はプレー中です。アウトになるおそれも見ながら次のるいをねらえます。"),
+            ("ボールが外野にあるだけでプレーをやめる", False, "ボールがピッチャーへ戻る前は、まだプレーが続いています。"),
+            ("1るいと2るいの間に座って待つ", False, "プレー中にるいの間で待つのはあぶないです。"),
+        ),
+        point="ボールが円の中のピッチャーへ戻る前は、ボールとコーチを見て、自分のせきにんで次のるいをねらえます。",
+    ),
+    make_question(
+        question_id="3031",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(),
+        ball="1るいで止まり、ピッチャーが円の中でボールを持った",
+        note="バッターランナーは1るいベースをふんでいる。ピッチャーはまだ投げず、送球もしていない。",
+        options=(
+            ("1るいについて待つ", True, "ピッチャーが円の中でボールを持った時にベース上なら、投球や送球など次のプレーまでは離れません。"),
+            ("すぐ2るいへ走り出す", False, "ベースについているランナーは、ピッチャーがボールを持つ円の中にいる間、勝手に離れません。"),
+            ("少しだけベースから出て止まる", False, "少しでも勝手に離れると、ルックバックルールでアウトになることがあります。"),
+        ),
+        point="円の中のピッチャーがボールを持った時にベース上なら、投球や送球などのプレーが始まるまで、ベースを離れません。",
+    ),
+    make_question(
+        question_id="3032",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(),
+        ball="ショートへのゴロを打った",
+        note="1るいには、白とオレンジのダブルベースがある。守る人は白い方で送球を受ける。",
+        options=(
+            ("オレンジのベースへまっすぐ走りぬける", True, "ふつうの1るいのプレーでは、バッターランナーはオレンジのベースを使うと、守る人とぶつかりにくくなります。"),
+            ("守る人と同じ白いベースへ走る", False, "ふつうのプレーでは、守る人と走る場所を分けるためオレンジの方を使います。"),
+            ("1るいの前で急に止まる", False, "急に止まらず、オレンジのベースまで走りぬけます。"),
+        ),
+        point="ダブルベースでは、ふつうバッターランナーはオレンジ、守る人は白を使い、安全にプレーします。大会ルールで確認します。",
+    ),
+    make_question(
+        question_id="3033",
+        runner_role=RunnerRole.BATTER_RUNNER,
+        outs=0,
+        runners=RunnerState(),
+        ball="本るい前の小さいゴロを打った",
+        note="キャッチャーがボールをとり、1るいへなげようとしている。",
+        options=(
+            ("1るいへの走る道をまっすぐ走る", True, "決められた走る道をまっすぐ走ると、送球や守る人のじゃまをしにくくなります。"),
+            ("送球をじゃまするため内野へ大きく曲がる", False, "わざと送球をじゃまする走り方は反則になることがあります。"),
+            ("キャッチャーの前で止まる", False, "ボールを打ったら、1るいへ全力で走ります。"),
+        ),
+        point="バッターランナーは、守る人や送球をじゃませず、1るいへの道をまっすぐ走ります。",
+    ),
 )
 
 
 FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="r1-grounder-force-second",
+        question_id="3009",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=0,
         runners=RunnerState(first=True),
@@ -140,7 +211,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="フォースの時は、次のるいへ強く走ります。",
     ),
     make_question(
-        question_id="r1-fly-halfway",
+        question_id="3010",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=0,
         runners=RunnerState(first=True),
@@ -154,7 +225,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="フライは、戻れる場所で待ってボールを見るのがきほんです。",
     ),
     make_question(
-        question_id="r1-line-drive-freeze",
+        question_id="3011",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=1,
         runners=RunnerState(first=True),
@@ -168,7 +239,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ライナーは、とられた時に戻れる動きをします。",
     ),
     make_question(
-        question_id="r1-hit-to-outfield",
+        question_id="3012",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=0,
         runners=RunnerState(first=True),
@@ -182,7 +253,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ヒットでは、ボールとコーチを見て次のるいを決めます。",
     ),
     make_question(
-        question_id="r1-two-outs-run-contact",
+        question_id="3013",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=2,
         runners=RunnerState(first=True),
@@ -196,7 +267,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2アウトでは、打ったらすぐ走ります。",
     ),
     make_question(
-        question_id="r1-wild-pitch",
+        question_id="3014",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=1,
         runners=RunnerState(first=True),
@@ -210,7 +281,7 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ボールが大きくそれた時は、コーチを見て次のるいをねらいます。",
     ),
     make_question(
-        question_id="rule-leaving-base-early",
+        question_id="3015",
         runner_role=RunnerRole.FIRST_RUNNER,
         outs=0,
         runners=RunnerState(first=True),
@@ -225,12 +296,84 @@ FIRST_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="日本のソフトボールのルールでは、ランナーはピッチャーが投げる前に勝手にるいを離れません。",
         difficulty=Difficulty.INTERMEDIATE,
     ),
+    make_question(
+        question_id="3034",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="1るいランナーはベースをふんでいる。ピッチャーはまだ投げず、送球もしていない。",
+        options=(
+            ("1るいについて待つ", True, "円の中のピッチャーがボールを持っている間、ベース上のランナーは次の投球や送球まで離れません。"),
+            ("2るいへ向かって少しだけ出る", False, "ベースから勝手に離れると、ルックバックルールでアウトになることがあります。"),
+            ("1るいと2るいの間で待つ", False, "安全な1るいについて待ちます。"),
+        ),
+        point="ピッチャーが円の中でボールを持った時にベース上なら、投球や送球などのプレーが始まるまで離れません。",
+    ),
+    make_question(
+        question_id="3035",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=1,
+        runners=RunnerState(first=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="1るいランナーは1るいと2るいのまん中。コーチは2るいへ進めのサイン。",
+        options=(
+            ("止まらず2るいまで進む", True, "るいを離れている時は、戻るか進むかをすぐ決めて、一つの向きに動き続けます。"),
+            ("るいのまん中で止まって考える", False, "止まると、ルックバックルールでアウトになることがあります。"),
+            ("2るいへ進んでから1るいへ引き返す", False, "進むと決めたあとに向きを変えると、アウトになることがあります。"),
+        ),
+        point="円の中のピッチャーがボールを持ったら、るいの間では止まらず、戻るか進むかを一つに決めます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3036",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="外野から戻ったボールを、ピッチャーが円の外でとった",
+        note="1るいランナーは2るいをねらえる場所にいる。コーチが進めのサイン。",
+        options=(
+            ("ボールを見ながら2るいへ走る", True, "ピッチャーがまだ円の外ならプレー中です。タッチアウトのおそれを考えながら進めます。"),
+            ("円の外でも、ピッチャーが持っただけで必ず止まる", False, "円の外でボールを持っているだけでは、ルックバックルールのこの場面にはなりません。"),
+            ("その場でボールから目をそらす", False, "プレー中はボールとコーチを見ます。"),
+        ),
+        point="ピッチャーが円の外にいる間はボールが動いているプレーです。ボールとコーチを見て次のるいをねらえます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3037",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="コーチから2るいへのとうるいサインが出た",
+        note="ピッチャーはこれから投げるところ。",
+        options=(
+            ("ピッチャーの手からボールが離れてから走る", True, "ソフトボールでは、投球前にるいを離れず、決められたタイミングから走ります。"),
+            ("ピッチャーが投げる前から走る", False, "早くるいを離れるとアウトになることがあります。"),
+            ("サインを見ずに本るいへ戻る", False, "1るいランナーは、正しいタイミングで2るいをねらいます。"),
+        ),
+        point="とうるいでも投球前に勝手にるいを離れず、ピッチャーの手からボールが離れてから走ります。大会ルールで確認します。",
+    ),
+    make_question(
+        question_id="3038",
+        runner_role=RunnerRole.FIRST_RUNNER,
+        outs=1,
+        runners=RunnerState(first=True),
+        ball="1るいランナーが2るいへ走り、送球が来た",
+        note="ボールとランナーが2るいへほぼ同時に着きそう。",
+        options=(
+            ("ベースへ安全にスライディングする", True, "近いプレーでは、安全なスライディングでベースに早くふれ、守る人とのしょうとつをへらします。"),
+            ("ベースの前で立ち止まる", False, "止まるとタッチされやすくなります。"),
+            ("守る人に向かってぶつかる", False, "しょうとつをさけ、安全にベースをねらいます。"),
+        ),
+        point="るいで近いプレーになる時は、練習した安全なスライディングでベースをねらいます。",
+    ),
 )
 
 
 SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="r2-grounder-right-side",
+        question_id="3016",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=0,
         runners=RunnerState(second=True),
@@ -244,7 +387,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2るいランナーは、右方向のゴロで3るいへ進みやすくなります。",
     ),
     make_question(
-        question_id="r2-grounder-in-front",
+        question_id="3017",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=0,
         runners=RunnerState(second=True),
@@ -258,7 +401,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="自分の前のゴロは、むりに進まずコーチを見ます。",
     ),
     make_question(
-        question_id="r2-outfield-hit-home",
+        question_id="3018",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=1,
         runners=RunnerState(second=True),
@@ -273,7 +416,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="r2-fly-tag-up",
+        question_id="3019",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=1,
         runners=RunnerState(second=True),
@@ -288,7 +431,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="rule-tag-up-after-catch",
+        question_id="3020",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=1,
         runners=RunnerState(second=True),
@@ -303,7 +446,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="タッチアップは、野手がフライに最初にふれたあと、元のるいから走り出せます。",
     ),
     make_question(
-        question_id="r2-line-drive-return",
+        question_id="3021",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=0,
         runners=RunnerState(second=True),
@@ -317,7 +460,7 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ライナーでは、元のるいへ戻れることを優先します。",
     ),
     make_question(
-        question_id="r2-two-outs-run",
+        question_id="3022",
         runner_role=RunnerRole.SECOND_RUNNER,
         outs=2,
         runners=RunnerState(second=True),
@@ -330,12 +473,84 @@ SECOND_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="2アウトのランナーは、打ったらすぐ走ります。",
     ),
+    make_question(
+        question_id="3039",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=0,
+        runners=RunnerState(second=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="2るいランナーは2るいベースをふんでいる。ピッチャーはまだ投げず、送球もしていない。",
+        options=(
+            ("2るいについて待つ", True, "円の中のピッチャーがボールを持っている間、ベース上のランナーは次の投球や送球まで離れません。"),
+            ("3るいへ少しだけ出る", False, "ベースから勝手に離れると、ルックバックルールでアウトになることがあります。"),
+            ("1るいへ戻る", False, "今いる2るいについて待ちます。"),
+        ),
+        point="円の中のピッチャーがボールを持った時にベース上なら、投球や送球などのプレーが始まるまで離れません。",
+    ),
+    make_question(
+        question_id="3040",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=1,
+        runners=RunnerState(second=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="2るいランナーは2るいと3るいの間。3るいコーチは戻れのサイン。",
+        options=(
+            ("止まらず2るいへ戻る", True, "るいの間にいる時は、戻るか進むかをすぐ決めて、一つの向きに動き続けます。"),
+            ("その場で止まってしんぱんを見る", False, "るいの間で止まると、ルックバックルールでアウトになることがあります。"),
+            ("2るいへ戻りかけてから3るいへ向きを変える", False, "戻ると決めたあとに向きを変えると、アウトになることがあります。"),
+        ),
+        point="ピッチャーが円の中でボールを持ったら、るいの間では止まらず、戻るか進むかを一つに決めます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3041",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=0,
+        runners=RunnerState(second=True),
+        ball="返球をピッチャーが円の外で持っている",
+        note="2るいランナーは3るいをねらっている。ボールはまだ円の中へ戻っていない。",
+        options=(
+            ("ボールとコーチを見て、行けるなら3るいをねらう", True, "ピッチャーが円の外ならプレー中です。タッチアウトのおそれを見ながら進めます。"),
+            ("円の外でもランナーは必ず動けない", False, "ボールが円の中のピッチャーへ戻る前は、進るいをねらえます。"),
+            ("ボールを見ずにゆっくり歩く", False, "プレー中はボールとコーチを見て動きます。"),
+        ),
+        point="ボールが円の中のピッチャーへ戻る前は、ボールとコーチを見て、自分のせきにんで進るいできます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3042",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=0,
+        runners=RunnerState(first=True, second=True),
+        ball="バッターが内野ゴロを打った",
+        note="1るいと2るいにランナーがいるので、2るいランナーは3るいへ進む必要がある。",
+        options=(
+            ("3るいへ全力で走る", True, "後ろのランナーが2るいへ来るので、3るいへ進むフォースの場面です。"),
+            ("2るいへ戻って動かない", False, "バッターが打ったゴロでは、後ろからランナーが来るため戻れません。"),
+            ("1るいへ走る", False, "ランナーは次の3るいへ進みます。"),
+        ),
+        point="1・2るいにランナーがいるゴロでは、2るいランナーも3るいへ進むフォースになります。",
+    ),
+    make_question(
+        question_id="3043",
+        runner_role=RunnerRole.SECOND_RUNNER,
+        outs=1,
+        runners=RunnerState(second=True),
+        ball="投球がキャッチャーの後ろへ大きくそれた",
+        note="2るいランナーからボールが見え、コーチが3るいへ進めのサイン。",
+        options=(
+            ("すぐ3るいへ走る", True, "ボールが大きくそれてコーチが進めなら、次のるいをねらうチャンスです。"),
+            ("2るいから動かない", False, "安全に進めるチャンスを見のがしてしまいます。"),
+            ("1るいへ戻る", False, "2るいランナーは次の3るいをねらいます。"),
+        ),
+        point="投球が大きくそれた時は、ボールとコーチを見て次のるいをねらいます。",
+    ),
 )
 
 
 THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="r3-fly-tag-home",
+        question_id="3023",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=1,
         runners=RunnerState(third=True),
@@ -350,7 +565,7 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="r3-grounder-infield-in",
+        question_id="3024",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=1,
         runners=RunnerState(third=True),
@@ -364,7 +579,7 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="前進守びのゴロでは、むりに本るいへ走らずコーチを見ます。",
     ),
     make_question(
-        question_id="r3-passed-ball-home",
+        question_id="3025",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=0,
         runners=RunnerState(third=True),
@@ -378,7 +593,7 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ボールが大きくそれた時は、コーチを見て本るいをねらいます。",
     ),
     make_question(
-        question_id="r3-two-outs-contact",
+        question_id="3026",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=2,
         runners=RunnerState(third=True),
@@ -392,7 +607,7 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2アウトでは、打ったらすぐ本るいへ走ります。",
     ),
     make_question(
-        question_id="r3-bases-loaded-force-home",
+        question_id="3027",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=0,
         runners=RunnerState(first=True, second=True, third=True),
@@ -407,7 +622,7 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="r3-line-drive-return",
+        question_id="3028",
         runner_role=RunnerRole.THIRD_RUNNER,
         outs=1,
         runners=RunnerState(third=True),
@@ -419,6 +634,79 @@ THIRD_RUNNER_QUESTIONS: tuple[QuizQuestion, ...] = (
             ("2るいへ走る", False, "元のるいは3るいです。"),
         ),
         point="ライナーでは、元のるいへ戻れることを優先します。",
+    ),
+    make_question(
+        question_id="3044",
+        runner_role=RunnerRole.THIRD_RUNNER,
+        outs=0,
+        runners=RunnerState(third=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="3るいランナーは3るいベースをふんでいる。ピッチャーはまだ投げず、送球もしていない。",
+        options=(
+            ("3るいについて待つ", True, "円の中のピッチャーがボールを持っている間、ベース上のランナーは次の投球や送球まで離れません。"),
+            ("本るいへ少しだけ出る", False, "ベースから勝手に離れると、ルックバックルールでアウトになることがあります。"),
+            ("2るいへ戻る", False, "今いる3るいについて待ちます。"),
+        ),
+        point="円の中のピッチャーがボールを持った時にベース上なら、投球や送球などのプレーが始まるまで離れません。",
+    ),
+    make_question(
+        question_id="3045",
+        runner_role=RunnerRole.THIRD_RUNNER,
+        outs=1,
+        runners=RunnerState(third=True),
+        ball="ピッチャーが円の中でボールを持った",
+        note="3るいランナーは3るいと本るいの間。コーチは3るいへ戻れのサイン。",
+        options=(
+            ("止まらず3るいへ戻る", True, "るいを離れている時は、戻るか進むかをすぐ決めて、一つの向きに動き続けます。"),
+            ("その場で止まって考える", False, "るいの間で止まると、ルックバックルールでアウトになることがあります。"),
+            ("3るいへ戻りかけてから本るいへ向きを変える", False, "戻ると決めたあとに向きを変えると、アウトになることがあります。"),
+        ),
+        point="ピッチャーが円の中でボールを持ったら、るいの間では止まらず、戻るか進むかを一つに決めます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3046",
+        runner_role=RunnerRole.THIRD_RUNNER,
+        outs=0,
+        runners=RunnerState(third=True),
+        ball="外野から戻ったボールを、ピッチャーが円の外でとった",
+        note="3るいランナーは本るいをねらえる場所にいる。コーチが行けのサイン。",
+        options=(
+            ("ボールを見ながら本るいへ走る", True, "ピッチャーがまだ円の外ならプレー中です。アウトのおそれも見ながら本るいをねらえます。"),
+            ("円の外でも、ピッチャーが持っただけで3るいへ戻る", False, "円の外で持っている間は、ボールとコーチを見て進るいをねらえます。"),
+            ("3るいと本るいの間で座る", False, "プレー中にるいの間で待つのはあぶないです。"),
+        ),
+        point="ピッチャーが円の外にいる間はプレー中です。ボールとコーチを見て本るいをねらえます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3047",
+        runner_role=RunnerRole.THIRD_RUNNER,
+        outs=0,
+        runners=RunnerState(third=True),
+        ball="スクイズのサインが出た",
+        note="バッターはバントのかまえ。ピッチャーはこれから投げるところ。",
+        options=(
+            ("決められた投球のタイミングから本るいへ走る", True, "スクイズでも投球前に勝手にるいを離れず、ルールに合うタイミングでスタートします。"),
+            ("ピッチャーが投げる前から本るいへ走る", False, "投球前に早くるいを離れるとアウトになることがあります。"),
+            ("バッターより先に1るいへ走る", False, "3るいランナーは本るいをねらいます。"),
+        ),
+        point="スクイズでも、投球前に勝手にるいを離れません。スタートの細かい基準は大会ルールで確認します。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="3048",
+        runner_role=RunnerRole.THIRD_RUNNER,
+        outs=1,
+        runners=RunnerState(third=True),
+        ball="バッターが1・2るい間へゴロを打った",
+        note="打球は3るいランナーから遠い。コーチが本るいへ行けのサイン。",
+        options=(
+            ("すぐ本るいへ走る", True, "自分から遠いゴロでコーチが行けなら、本るいをねらいます。"),
+            ("2るいへ戻る", False, "3るいランナーの次のるいは本るいです。"),
+            ("打球の近くまで見に行く", False, "打球へ近づかず、コーチを見て本るいへ走ります。"),
+        ),
+        point="3るいランナーは、自分から遠いゴロでコーチのサインを見て本るいをねらいます。",
     ),
 )
 

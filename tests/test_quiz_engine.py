@@ -10,6 +10,7 @@ from softball_quiz.data import (
     questions_for_rule_topic,
     questions_for_runner_role,
 )
+from softball_quiz.data.defense_return_questions import DEFENSE_RETURN_QUESTIONS
 from softball_quiz.models import POSITION_ORDER, RULE_TOPIC_ORDER, RUNNER_ROLE_ORDER
 from softball_quiz.services import QuizEngine
 from softball_quiz.ui.components import FieldDiagram, StrikeZoneDiagram
@@ -29,6 +30,10 @@ class QuestionDataTest(unittest.TestCase):
         ids = [question.id for question in QUESTIONS]
         self.assertEqual(len(ids), len(set(ids)))
 
+    def test_question_ids_are_digit_strings(self) -> None:
+        for question in QUESTIONS:
+            self.assertTrue(question.id.isdigit(), msg=question.id)
+
     def test_question_bank_has_enough_variation(self) -> None:
         self.assertGreaterEqual(len(QUESTIONS), 55)
 
@@ -42,7 +47,7 @@ class QuestionDataTest(unittest.TestCase):
             after_return_questions = [
                 question
                 for question in questions_for_position(position)
-                if "-after-return-" in question.id
+                if question in DEFENSE_RETURN_QUESTIONS
             ]
             self.assertGreaterEqual(len(after_return_questions), 3, msg=position.value)
 
@@ -101,12 +106,31 @@ class QuestionDataTest(unittest.TestCase):
             )
 
     def test_cover_questions_are_anticipatory(self) -> None:
+        cover_question_ids = {
+            "1001",
+            "1005",
+            "1007",
+            "1206",
+            "1211",
+            "1223",
+            "2005",
+            "2011",
+            "2013",
+            "2018",
+            "2204",
+            "2217",
+            "2224",
+            "2228",
+            "2233",
+            "2239",
+            "2241",
+        }
         cover_questions = [
             question
             for question in QUESTIONS
-            if "cover" in question.id or "backup" in question.id
+            if question.id in cover_question_ids
         ]
-        self.assertTrue(cover_questions)
+        self.assertEqual(cover_question_ids, {question.id for question in cover_questions})
 
         for question in cover_questions:
             scenario_text = f"{question.scenario.batted_ball} {question.scenario.fielding_note}"
@@ -146,7 +170,7 @@ class QuestionDataTest(unittest.TestCase):
 
     def test_foul_line_fair_question_stops_on_first_base_line(self) -> None:
         diagram = FieldDiagram()
-        question = next(question for question in QUESTIONS if question.id == "rule-foul-line-is-fair")
+        question = next(question for question in QUESTIONS if question.id == "3211")
 
         point = diagram._location_point(question.scenario.batted_ball)
 
@@ -162,7 +186,7 @@ class QuestionDataTest(unittest.TestCase):
 
     def test_past_first_base_then_foul_lands_outside_first_base_line(self) -> None:
         diagram = FieldDiagram()
-        question = next(question for question in QUESTIONS if question.id == "rule-past-base-then-foul")
+        question = next(question for question in QUESTIONS if question.id == "3213")
 
         point = diagram._location_point(question.scenario.batted_ball)
 
@@ -191,7 +215,7 @@ class QuestionDataTest(unittest.TestCase):
 
     def test_tag_between_bases_shows_ball_possession_not_runner_location(self) -> None:
         diagram = FieldDiagram()
-        question = next(question for question in QUESTIONS if question.id == "rule-tag-between-bases")
+        question = next(question for question in QUESTIONS if question.id == "3210")
 
         self.assertIsNotNone(
             diagram._possession_point(

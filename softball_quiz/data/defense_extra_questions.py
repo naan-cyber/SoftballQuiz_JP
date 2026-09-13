@@ -6,7 +6,7 @@ from softball_quiz.models import DefensivePosition, Difficulty, QuizQuestion, Ru
 
 DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="pitcher-bunt-runner-third-home",
+        question_id="2201",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(third=True),
@@ -21,7 +21,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-grounder-runner-second-hold",
+        question_id="2202",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(second=True),
@@ -35,7 +35,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2るいランナーだけのゴロは、ランナーを見てから1るいアウトを考えます。",
     ),
     make_question(
-        question_id="pitcher-pop-fly-call",
+        question_id="2203",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(first=True),
@@ -49,7 +49,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ピッチャー前のフライは、声を出して安全にキャッチします。",
     ),
     make_question(
-        question_id="pitcher-backup-third-bunt",
+        question_id="2204",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(second=True),
@@ -64,7 +64,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-comeback-two-outs-first",
+        question_id="2205",
         position=DefensivePosition.PITCHER,
         outs=2,
         runners=RunnerState(first=True, second=True),
@@ -78,7 +78,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2アウトでは、確実にとれるアウトを選んで攻守交代にします。",
     ),
     make_question(
-        question_id="catcher-bunt-runner-third-tag",
+        question_id="2206",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(third=True),
@@ -93,7 +93,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-foul-pop-first-side",
+        question_id="2207",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(first=True),
@@ -107,7 +107,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ファウルフライも、声を出して安全にキャッチをねらいます。",
     ),
     make_question(
-        question_id="catcher-runner-third-wild-pitch",
+        question_id="2208",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(third=True),
@@ -121,7 +121,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="キャッチャーは、ボールを後ろにそらさないことが大切です。",
     ),
     make_question(
-        question_id="catcher-dropped-third-first",
+        question_id="2209",
         position=DefensivePosition.CATCHER,
         outs=2,
         runners=RunnerState(),
@@ -136,7 +136,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-first-runner-big-turn",
+        question_id="2210",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(first=True),
@@ -151,7 +151,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-line-foul-grounder",
+        question_id="2211",
         position=DefensivePosition.FIRST_BASE,
         outs=0,
         runners=RunnerState(),
@@ -165,7 +165,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ラインぎわの打球は、フェアかファウルを見ながら早く動きます。",
     ),
     make_question(
-        question_id="first-base-line-drive-runner-first",
+        question_id="2212",
         position=DefensivePosition.FIRST_BASE,
         outs=1,
         runners=RunnerState(first=True),
@@ -180,7 +180,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-cutoff-right-field",
+        question_id="2213",
         position=DefensivePosition.FIRST_BASE,
         outs=1,
         runners=RunnerState(first=True),
@@ -195,7 +195,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="first-base-bunt-runner-second",
+        question_id="2214",
         position=DefensivePosition.FIRST_BASE,
         outs=0,
         runners=RunnerState(second=True),
@@ -209,7 +209,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="バントでは、むりな先のるいより確かなアウトを選びます。",
     ),
     make_question(
-        question_id="first-base-pop-between-pitcher",
+        question_id="2215",
         position=DefensivePosition.FIRST_BASE,
         outs=0,
         runners=RunnerState(),
@@ -223,7 +223,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="あいだのフライは、声を出して安全にキャッチします。",
     ),
     make_question(
-        question_id="second-base-grounder-runner-third-two-outs",
+        question_id="2216",
         position=DefensivePosition.SECOND_BASE,
         outs=2,
         runners=RunnerState(third=True),
@@ -237,7 +237,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2アウトでは、確実な1るいアウトで攻守交代にできます。",
     ),
     make_question(
-        question_id="second-base-cover-first-bunt",
+        question_id="2217",
         position=DefensivePosition.SECOND_BASE,
         outs=0,
         runners=RunnerState(),
@@ -251,7 +251,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="カバーは、打球を見て先に動きます。",
     ),
     make_question(
-        question_id="second-base-line-drive-runner-first",
+        question_id="2218",
         position=DefensivePosition.SECOND_BASE,
         outs=0,
         runners=RunnerState(first=True),
@@ -266,7 +266,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="second-base-pop-behind-base",
+        question_id="2219",
         position=DefensivePosition.SECOND_BASE,
         outs=1,
         runners=RunnerState(second=True),
@@ -280,7 +280,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="後ろのフライは、外野と声をかけ合ってプレーします。",
     ),
     make_question(
-        question_id="second-base-grounder-first-third",
+        question_id="2220",
         position=DefensivePosition.SECOND_BASE,
         outs=1,
         runners=RunnerState(first=True, third=True),
@@ -295,7 +295,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="third-base-slow-grounder-charge",
+        question_id="2221",
         position=DefensivePosition.THIRD_BASE,
         outs=0,
         runners=RunnerState(),
@@ -309,7 +309,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ゆるいゴロは前へ出て、早く1るいへなげます。",
     ),
     make_question(
-        question_id="third-base-line-drive-runner-second",
+        question_id="2222",
         position=DefensivePosition.THIRD_BASE,
         outs=0,
         runners=RunnerState(second=True),
@@ -324,7 +324,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="third-base-foul-line-grounder",
+        question_id="2223",
         position=DefensivePosition.THIRD_BASE,
         outs=0,
         runners=RunnerState(),
@@ -338,7 +338,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ラインぎわの打球は、フェアかファウルを見ながら早く動きます。",
     ),
     make_question(
-        question_id="third-base-cover-third-steal",
+        question_id="2224",
         position=DefensivePosition.THIRD_BASE,
         outs=1,
         runners=RunnerState(second=True),
@@ -352,7 +352,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="とうるいをアウトにするには、先にベースへ入り、ボールを持ってタッチします。",
     ),
     make_question(
-        question_id="third-base-bunt-first-second",
+        question_id="2225",
         position=DefensivePosition.THIRD_BASE,
         outs=0,
         runners=RunnerState(first=True, second=True),
@@ -367,7 +367,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="shortstop-deep-grounder-first",
+        question_id="2226",
         position=DefensivePosition.SHORTSTOP,
         outs=0,
         runners=RunnerState(),
@@ -381,7 +381,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ショートの深いゴロは、早く1るいへなげる準備をします。",
     ),
     make_question(
-        question_id="shortstop-slow-roller-charge",
+        question_id="2227",
         position=DefensivePosition.SHORTSTOP,
         outs=0,
         runners=RunnerState(),
@@ -395,7 +395,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ゆるいゴロは、前へ出て早くプレーします。",
     ),
     make_question(
-        question_id="shortstop-cover-third-steal",
+        question_id="2228",
         position=DefensivePosition.SHORTSTOP,
         outs=0,
         runners=RunnerState(second=True),
@@ -409,7 +409,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="とうるいでは、サインで決めた人が先にベースへ入ります。",
     ),
     make_question(
-        question_id="shortstop-cutoff-center-home",
+        question_id="2229",
         position=DefensivePosition.SHORTSTOP,
         outs=1,
         runners=RunnerState(second=True),
@@ -424,7 +424,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="shortstop-popup-behind-third",
+        question_id="2230",
         position=DefensivePosition.SHORTSTOP,
         outs=1,
         runners=RunnerState(second=True),
@@ -438,7 +438,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="あいだのフライは、声を出して安全にプレーします。",
     ),
     make_question(
-        question_id="left-field-base-hit-runner-first-third",
+        question_id="2231",
         position=DefensivePosition.LEFT_FIELD,
         outs=0,
         runners=RunnerState(first=True),
@@ -452,7 +452,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="レフト前ヒットでは、1るいランナーが3るいへ行くかを見ます。",
     ),
     make_question(
-        question_id="left-field-deep-fly-back",
+        question_id="2232",
         position=DefensivePosition.LEFT_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -466,7 +466,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="外野の深いフライは、早く下がって落下点へ入ります。",
     ),
     make_question(
-        question_id="left-field-backup-center-gap",
+        question_id="2233",
         position=DefensivePosition.LEFT_FIELD,
         outs=0,
         runners=RunnerState(first=True),
@@ -480,7 +480,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="外野手は、となりの外野手のうしろもカバーします。",
     ),
     make_question(
-        question_id="left-field-grounder-wall",
+        question_id="2234",
         position=DefensivePosition.LEFT_FIELD,
         outs=2,
         runners=RunnerState(second=True),
@@ -495,7 +495,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="left-field-fly-runner-second",
+        question_id="2235",
         position=DefensivePosition.LEFT_FIELD,
         outs=1,
         runners=RunnerState(second=True),
@@ -509,7 +509,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2るいランナーのタッチアップでは、キャッチ後に3るいを見ます。",
     ),
     make_question(
-        question_id="center-field-low-line",
+        question_id="2236",
         position=DefensivePosition.CENTER_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -524,7 +524,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="center-field-gap-left-voice",
+        question_id="2237",
         position=DefensivePosition.CENTER_FIELD,
         outs=0,
         runners=RunnerState(first=True),
@@ -538,7 +538,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="センターは外野のまん中として、声を出してプレーをまとめます。",
     ),
     make_question(
-        question_id="center-field-base-hit-runner-first-third",
+        question_id="2238",
         position=DefensivePosition.CENTER_FIELD,
         outs=1,
         runners=RunnerState(first=True),
@@ -552,7 +552,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="センター前ヒットでは、先のランナーがどこまで行くかを見ます。",
     ),
     make_question(
-        question_id="center-field-backup-right-deep",
+        question_id="2239",
         position=DefensivePosition.CENTER_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -566,7 +566,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="センターは、左右の外野の深い打球もカバーします。",
     ),
     make_question(
-        question_id="center-field-two-outs-any-hit",
+        question_id="2240",
         position=DefensivePosition.CENTER_FIELD,
         outs=2,
         runners=RunnerState(second=True),
@@ -581,7 +581,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="right-field-backup-second-throw",
+        question_id="2241",
         position=DefensivePosition.RIGHT_FIELD,
         outs=0,
         runners=RunnerState(first=True),
@@ -595,7 +595,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ライトも、2るいへの送球を予想してカバーに動きます。",
     ),
     make_question(
-        question_id="right-field-deep-fly-back",
+        question_id="2242",
         position=DefensivePosition.RIGHT_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -609,7 +609,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="外野の深いフライは、早く下がって落下点へ入ります。",
     ),
     make_question(
-        question_id="right-field-foul-line-fly",
+        question_id="2243",
         position=DefensivePosition.RIGHT_FIELD,
         outs=1,
         runners=RunnerState(first=True),
@@ -623,7 +623,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ファウルフライも、キャッチすればアウトになります。",
     ),
     make_question(
-        question_id="right-field-gap-center-voice",
+        question_id="2244",
         position=DefensivePosition.RIGHT_FIELD,
         outs=0,
         runners=RunnerState(),
@@ -637,7 +637,7 @@ DEFENSE_EXTRA_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="外野の間のフライは、声を出してだれがとるか決めます。",
     ),
     make_question(
-        question_id="right-field-runner-second-home",
+        question_id="2245",
         position=DefensivePosition.RIGHT_FIELD,
         outs=1,
         runners=RunnerState(second=True),

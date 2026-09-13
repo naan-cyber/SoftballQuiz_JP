@@ -6,7 +6,7 @@ from softball_quiz.models import DefensivePosition, Difficulty, QuizQuestion, Ru
 
 PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="pitcher-cover-first",
+        question_id="1001",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(),
@@ -20,7 +20,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="カバーは送球を待ってからではなく、打球を見て先に動きます。",
     ),
     make_question(
-        question_id="pitcher-home-grounder",
+        question_id="1002",
         position=DefensivePosition.PITCHER,
         outs=1,
         runners=RunnerState(third=True),
@@ -35,7 +35,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-bunt-force-second",
+        question_id="1003",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(first=True),
@@ -49,7 +49,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="ランナーが次のるいへ行かないといけない時は、フォースアウトを使えます。",
     ),
     make_question(
-        question_id="pitcher-line-drive-double-play",
+        question_id="1004",
         position=DefensivePosition.PITCHER,
         outs=1,
         runners=RunnerState(first=True),
@@ -64,7 +64,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-backup-home",
+        question_id="1005",
         position=DefensivePosition.PITCHER,
         outs=1,
         runners=RunnerState(second=True),
@@ -79,7 +79,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="pitcher-loaded-two-outs-force",
+        question_id="1006",
         position=DefensivePosition.PITCHER,
         outs=2,
         runners=RunnerState(first=True, second=True, third=True),
@@ -93,7 +93,7 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="2アウト満るいでは、いちばん近くて安全なフォースアウトを選びます。",
     ),
     make_question(
-        question_id="pitcher-cover-third-overthrow",
+        question_id="1007",
         position=DefensivePosition.PITCHER,
         outs=0,
         runners=RunnerState(second=True),
@@ -106,12 +106,83 @@ PITCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="カバーは、なげる前からプレーを予想して動きます。",
     ),
+    make_question(
+        question_id="1015",
+        position=DefensivePosition.PITCHER,
+        outs=0,
+        runners=RunnerState(first=True, second=True),
+        ball="センター前ヒットのあと、ないやへボールが返ってきた",
+        note="ランナーは1るいと2るいに止まり、ないや手がボールを持っている。",
+        options=(
+            ("円の中へすばやく入り、ボールをもらってランナーを見る", True, "ピッチャーが円の中でボールを持つと、ランナーの次の動きを止めやすくなります。"),
+            ("円の外に立ったまま、ボールをもらわない", False, "円の中でボールを持つところまで早く進めます。"),
+            ("間に合わない2るいへむりになげる", False, "あぶない送球より、円の中でボールを持ってプレーを落ちつかせます。"),
+        ),
+        point="ヒットの返球はピッチャーまでつなぎ、円の中でボールを持ってランナーを止めます。",
+    ),
+    make_question(
+        question_id="1016",
+        position=DefensivePosition.PITCHER,
+        outs=1,
+        runners=RunnerState(first=True),
+        ball="ピッチャーが円の中でボールを持っている",
+        note="1るいを出たランナーが戻り始めた。まだしんぱんはプレーを止めていない。",
+        options=(
+            ("なげたり、なげるふりをしたりせず、円の中でボールを持ち続ける", True, "ピッチャーがプレーをせずに円の中で持つと、ランナーは一つの方向へ進み続けます。"),
+            ("1るいへなげるふりをして、ランナーをおどろかせる", False, "なげるふりもプレーになり、ランナーがまた自由に動けることがあります。"),
+            ("ボールを持ったまま円の外へ出ていく", False, "円の外へ出ると、ルックバックルールでランナーを止められません。"),
+        ),
+        point="ランナーが一つの方向へ動き始めたら、ピッチャーはむりな送球やフェイクをせず円の中でボールを持ちます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="1017",
+        position=DefensivePosition.PITCHER,
+        outs=0,
+        runners=RunnerState(third=True),
+        ball="キャッチャーの後ろへボールが大きくそれた",
+        note="3るいランナーが本るいへ走る。キャッチャーがボールを追っている。",
+        options=(
+            ("本るいへ入り、キャッチャーからのボールをとってタッチする", True, "キャッチャーが後ろへ行ったら、ピッチャーが本るいをカバーします。"),
+            ("円の中で下を向いて待つ", False, "本るいがあくと、点をふせぐプレーができません。"),
+            ("3るいベースへ走る", False, "ランナーは3るいを出て本るいへ向かっています。"),
+        ),
+        point="キャッチャーが後ろのボールを追ったら、ピッチャーは本るいカバーへ走ります。",
+    ),
+    make_question(
+        question_id="1018",
+        position=DefensivePosition.PITCHER,
+        outs=1,
+        runners=RunnerState(first=True),
+        ball="1るい側のゆるいバント",
+        note="ファーストが前へ出た。2るいは間に合わないが、セカンドが1るいに入った。",
+        options=(
+            ("ボールをとり、1るいへなげて確かなアウトをとる", True, "2るいがむずかしい時は、カバーに入った味方へなげて1るいアウトをとります。"),
+            ("だれもいない2るいへむりになげる", False, "カバーがいないるいへなげると、ボールがぬけてしまいます。"),
+            ("ボールが止まるまでマウンドで待つ", False, "ゆるいバントは前へ出て早くとります。"),
+        ),
+        point="バントはカバーの場所を見て、間に合うるいで確かなアウトを選びます。",
+    ),
+    make_question(
+        question_id="1019",
+        position=DefensivePosition.PITCHER,
+        outs=0,
+        runners=RunnerState(),
+        ball="ピッチャーの足もとへの強いゴロ",
+        note="正面で止めれば、まだ1るいへなげる時間がある。",
+        options=(
+            ("グラブを下げてまず前に止め、ひろって1るいへなげる", True, "強いゴロは、まず後ろへぬけないように止めてからアウトをねらいます。"),
+            ("こわいのでボールから目をはなす", False, "最後までボールを見て、体の前で止めます。"),
+            ("とる前から1るいだけを見る", False, "まずボールをしっかり止めることが先です。"),
+        ),
+        point="ピッチャー正面の強いゴロは、まず前に止めてから落ちついてなげます。",
+    ),
 )
 
 
 CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
     make_question(
-        question_id="catcher-loaded-home-force",
+        question_id="1008",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(first=True, second=True, third=True),
@@ -126,7 +197,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-pop-fly",
+        question_id="1009",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(),
@@ -140,7 +211,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="フライは、まずキャッチして一つアウトをとります。",
     ),
     make_question(
-        question_id="catcher-throw-second-steal",
+        question_id="1010",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(first=True),
@@ -155,7 +226,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-block-third-runner",
+        question_id="1011",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(third=True),
@@ -169,7 +240,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="キャッチャーは、後ろにそらさないことが大切です。",
     ),
     make_question(
-        question_id="catcher-tag-home",
+        question_id="1012",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(second=True),
@@ -184,7 +255,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         difficulty=Difficulty.INTERMEDIATE,
     ),
     make_question(
-        question_id="catcher-bunt-runner-second",
+        question_id="1013",
         position=DefensivePosition.CATCHER,
         outs=0,
         runners=RunnerState(second=True),
@@ -198,7 +269,7 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         point="バントは早くとり、むりな先のるいより確かなアウトを選びます。",
     ),
     make_question(
-        question_id="catcher-first-third-steal",
+        question_id="1014",
         position=DefensivePosition.CATCHER,
         outs=1,
         runners=RunnerState(first=True, third=True),
@@ -211,5 +282,78 @@ CATCHER_QUESTIONS: tuple[QuizQuestion, ...] = (
         ),
         point="1・3るいでは、点になる3るいランナーを先に見ます。",
         difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="1020",
+        position=DefensivePosition.CATCHER,
+        outs=0,
+        runners=RunnerState(first=True, second=True),
+        ball="センター前ヒットの返球を、ピッチャーが円のすぐ外でとった",
+        note="ランナーはまだ次のるいをうかがっている。キャッチャーから全体が見える。",
+        options=(
+            ("「円の中へ！」と大きな声で伝え、ランナーの動きも見る", True, "円のすぐ外ではランナーはまだ進めます。キャッチャーが声でピッチャーを助けます。"),
+            ("だまってマスクをひろい、ボールから目をはなす", False, "まだランナーが動けるので、ボールとランナーを見て声を出します。"),
+            ("間に合わなくても「3るいへなげろ」と言う", False, "むりなプレーをすすめず、まずピッチャーを円の中へ入れます。"),
+        ),
+        point="ピッチャーが円の外で返球をとったら、キャッチャーは「円の中へ」と声を出します。",
+    ),
+    make_question(
+        question_id="1021",
+        position=DefensivePosition.CATCHER,
+        outs=1,
+        runners=RunnerState(third=True),
+        ball="レフト前ヒットの返球をキャッチャーがとった",
+        note="3るいランナーがベースを大きく離れた。サードへすぐなげれば、戻る前にタッチできそう。",
+        options=(
+            ("ピッチャーへ返す前に3るいへなげ、戻れないランナーをねらう", True, "ピッチャーが円の中で持つ前はボールが生きているので、間に合うアウトをねらえます。"),
+            ("3るいランナーを見ず、いつでもピッチャーへ返す", False, "返す前にとれるアウトがないか、先のランナーを見ます。"),
+            ("ボールを持ったままベンチへ歩く", False, "プレーは続いているので、すぐ判断します。"),
+        ),
+        point="ピッチャーが円の中でボールを持つ前はプレー中。戻れないランナーには早い送球でアウトをねらいます。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="1022",
+        position=DefensivePosition.CATCHER,
+        outs=0,
+        runners=RunnerState(third=True),
+        ball="ピッチャー前のバント",
+        note="ピッチャーが前へ出てとる。3るいランナーは本るいをねらっている。",
+        options=(
+            ("本るいを守り、ランナーとピッチャーへ声を出す", True, "キャッチャーまで打球を追うと本るいがあくので、点をふせぐ場所を守ります。"),
+            ("ピッチャーといっしょにボールを追う", False, "二人で追うと本るいがあいてしまいます。"),
+            ("1るいベースへ走る", False, "3るいランナーがいるので、まず本るいを守ります。"),
+        ),
+        point="3るいランナーがいるバントでは、キャッチャーは本るいを守って声を出します。",
+    ),
+    make_question(
+        question_id="1023",
+        position=DefensivePosition.CATCHER,
+        outs=0,
+        runners=RunnerState(first=True),
+        ball="3つ目のストライクが地面に落ちた",
+        note="1るいにはランナーがいる。バッターは1るいへ走ろうとした。",
+        prompt="キャッチャーはどうする？",
+        options=(
+            ("バッターはアウトだと分かり、ボールをひろってほかのランナーを見る", True, "2アウトより前で1るいがうまっている時は、3つ目をとれなくてもバッターはアウトです。ボールはすぐひろいます。"),
+            ("バッターだけを追って外野まで走る", False, "この場面ではバッターはアウトなので、ほかのランナーとボールを見ます。"),
+            ("ボールをそのままにしてベンチへ戻る", False, "ほかのランナーが動けるので、すぐボールをひろいます。"),
+        ),
+        point="2アウトより前で1るいがうまっている時の3つ目のストライクは、バッターがアウトです。大会ルールでも確認します。",
+        difficulty=Difficulty.INTERMEDIATE,
+    ),
+    make_question(
+        question_id="1024",
+        position=DefensivePosition.CATCHER,
+        outs=1,
+        runners=RunnerState(third=True),
+        ball="キャッチャーの後ろへボールが大きくそれた",
+        note="3るいランナーが本るいへ走る。ピッチャーが本るいカバーに入った。",
+        options=(
+            ("すぐボールをひろい、本るいのピッチャーへなげる", True, "キャッチャーがボールを追い、ピッチャーが本るいで返球を受けます。"),
+            ("ボールをひろわず、本るいへ先に走る", False, "本るいにはピッチャーが入っているので、キャッチャーはボールを早く返します。"),
+            ("1るいへなげる", False, "本るいへ来るランナーを止める場面です。"),
+        ),
+        point="後ろへそれたボールは、キャッチャーが追い、ピッチャーの本るいカバーへ返します。",
     ),
 )
