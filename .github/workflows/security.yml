@@ -30,11 +30,10 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v7
 
-      - name: Install locked dependencies
-        run: uv sync --locked
+      # uv-created virtualenvs have no pip, which pip-audit's environment mode requires,
+      # so audit the hashed lockfile export instead.
+      - name: Export locked requirements
+        run: uv export --locked --format requirements-txt --no-emit-project -o requirements-audit.txt
 
       - name: Audit Python dependencies
-        uses: pypa/gh-action-pip-audit@v1.1.0
-        with:
-          virtual-environment: .venv
-          vulnerability-service: osv
+        run: uvx pip-audit==2.10.1 --vulnerability-service osv --disable-pip --require-hashes -r requirements-audit.txt
